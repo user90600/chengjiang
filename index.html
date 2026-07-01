@@ -15,6 +15,7 @@
   <nav>
     <a href="index.html">首頁</a>
     <a href="inventory.html">車輛列表</a>
+    <a href="#process">交易流程</a>
     <a href="sell.html">我要賣車</a>
 
     <div class="about-menu">
@@ -46,26 +47,6 @@
         >
           LINE 聯絡我們
         </a>
-
-        <a
-          href="tel:0967238887"
-        >
-          電話：0967-238-887
-        </a>
-
-        <a
-          href="mailto:xunz1127@gmail.com"
-        >
-          Email 聯絡我們
-        </a>
-
-        <a
-          href="https://www.google.com/maps/search/?api=1&query=950%20%E8%87%BA%E6%9D%B1%E7%B8%A3%E8%87%BA%E6%9D%B1%E5%B8%82%E4%B8%AD%E5%BF%83%E9%87%8C%E9%96%8B%E5%B0%81%E8%A1%97725%E8%99%9F"
-          target="_blank"
-          rel="noopener"
-        >
-          開封街 725 號｜地圖導航
-        </a>
       </div>
     </div>
 
@@ -78,8 +59,8 @@
     <p class="hero-label">CHENG JIANG MOTOR</p>
 
     <h1>
-      嚴選每一台<br>
-      值得被騎走的車
+      誠信選車<br>
+      匠心把關
     </h1>
 
     <p>
@@ -104,7 +85,7 @@
   <h2>關於誠匠二輪</h2>
 
   <p class="about-highlight">
-    我們相信，一台車不只是交通工具，也是陪你走過生活、自由與熱愛的夥伴。
+    「誠」是誠信，代表我們對每一筆交易的承諾「匠」是匠心，代表我們對每一台車況把關的堅持。
   </p>
 
   <p class="about-text">
@@ -142,6 +123,17 @@
       <h3>快速估價</h3>
       <p>想賣車也能快速提供初步估價建議。</p>
     </div>
+  </div>
+</section>
+  </p>
+
+  <div class="process-wrap">
+    <img
+      class="process-img"
+      src="images/transaction-process.jpg"
+      alt="誠匠二輪買車與賣車流程"
+      loading="lazy"
+    >
   </div>
 </section>
 
@@ -199,6 +191,45 @@
   <p>週一至週六 10:00～21:00｜每週日公休</p>
 </footer>
 
+<style>
+  .process-section {
+    background: #ffffff;
+  }
+
+  .process-text {
+    margin: -6px auto 28px;
+    color: #666;
+    font-size: 18px;
+  }
+
+  .process-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .process-img {
+    display: block;
+    width: 100%;
+    max-width: 1200px;
+    height: auto;
+    border-radius: 18px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  }
+
+  @media (max-width: 700px) {
+    .process-img {
+      border-radius: 10px;
+    }
+
+    .process-text {
+      font-size: 16px;
+      line-height: 1.8;
+    }
+  }
+</style>
+
 <script>
 if (localStorage.getItem("isAdmin") === "true") {
   document.getElementById("adminBtn").style.display = "inline-block";
@@ -207,6 +238,7 @@ if (localStorage.getItem("isAdmin") === "true") {
 
 <script type="module">
 import { db } from "./firebase.js";
+
 import {
   collection,
   getDocs
