@@ -20,21 +20,34 @@
 </header>
 
 <section class="section">
-  <h1>車輛總覽</h1>
+  <h2>車輛列表</h2>
 
-  <select id="typeFilter" class="search-box">
-    <option value="all">全部車種</option>
-    <option value="速克達">速克達</option>
-    <option value="輕檔車">輕檔車</option>
-    <option value="大型重機">大型重機</option>
-    <option value="電動車">電動車</option>
-  </select>
+  <div style="
+    max-width:1200px;
+    margin:auto;
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:10px;
+  ">
+    <select id="typeFilter" class="search-box">
+      <option value="all">全部車種</option>
+      <option value="速克達">速克達</option>
+      <option value="輕檔車">輕檔車</option>
+      <option value="大型重機">大型重機</option>
+      <option value="電動車">電動車</option>
+    </select>
 
-  <select id="brandFilter" class="search-box">
-    <option value="all">全部品牌</option>
-  </select>
+    <select id="brandFilter" class="search-box">
+      <option value="all">全部品牌</option>
+    </select>
 
-  <input id="searchInput" class="search-box" placeholder="搜尋車款 / 品牌 / 年份">
+    <input
+      id="searchInput"
+      class="search-box"
+      placeholder="搜尋車款、品牌、年份"
+    >
+  </div>
 
   <div id="bikeList" class="grid"></div>
 </section>
@@ -48,77 +61,90 @@ if (localStorage.getItem("isAdmin") === "true") {
 <script type="module">
 import { db, collection, getDocs } from "./firebase.js";
 
-const container = document.getElementById("bikeList");
-const searchInput = document.getElementById("searchInput");
-const brandFilter = document.getElementById("brandFilter");
+const bikeList = document.getElementById("bikeList");
 const typeFilter = document.getElementById("typeFilter");
+const brandFilter = document.getElementById("brandFilter");
+const searchInput = document.getElementById("searchInput");
 
 let bikes = [];
 
-async function loadBikes() {
-  const snap = await getDocs(collection(db, "bikes"));
+function updateBrandOptions(sourceBikes) {
+  const currentBrand = brandFilter.value;
 
-  bikes = snap.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  }));
-
-  renderBrandOptions(bikes);
-  render(bikes);
-}
-
-function renderBrandOptions(sourceList) {
-  const selectedBrand = brandFilter.value;
-  const brands = [...new Set(sourceList.map(b => b.brand).filter(Boolean))];
+  const brands = [...new Set(
+    sourceBikes
+      .map(bike => (bike.brand || "").trim())
+      .filter(Boolean)
+  )].sort((a, b) => a.localeCompare(b));
 
   brandFilter.innerHTML = `<option value="all">全部品牌</option>`;
 
   brands.forEach(brand => {
-    brandFilter.innerHTML += `<option value="${brand}">${brand}</option>`;
+    brandFilter.innerHTML += `
+      <option value="${brand}">${brand}</option>
+    `;
   });
 
-  if (brands.includes(selectedBrand)) {
-    brandFilter.value = selectedBrand;
+  if (brands.includes(currentBrand)) {
+    brandFilter.value = currentBrand;
   }
 }
 
 function render(list) {
-  container.innerHTML = list.map(bike => `
+  if (list.length === 0) {
+    bikeList.innerHTML = "<p style='text-align:center;'>目前沒有符合條件的車輛。</p>";
+    return;
+  }
+
+  bikeList.innerHTML = list.map(bike => `
     <a href="bike.html?id=${bike.id}" class="card">
-      <img src="${bike.images?.[0] || ""}" alt="${bike.name}">
-      <h3>${bike.name}</h3>
-      <p>${bike.type || "未分類"}｜${bike.brand}</p>
-      <p>${bike.year}｜${bike.km} km</p>
-      <p>NT$${bike.price}</p>
+      <img src="${bike.images?.[0] || ""}" alt="${bike.name || "車輛圖片"}">
+      <h3>${bike.name || "未命名車輛"}</h3>
+      <p>${bike.type || "未分類"}｜${bike.brand || "-"}</p>
+      <p>${bike.year || "-"}｜${bike.km || "-"} km</p>
+      <p>NT$${bike.price || "-"}</p>
     </a>
   `).join("");
 }
 
 function applyFilters() {
-  const searchValue = searchInput.value.toLowerCase();
   const typeValue = typeFilter.value;
   const brandValue = brandFilter.value;
+  const keyword = searchInput.value.trim().toLowerCase();
 
-  let typeFiltered = bikes.filter(bike => {
+  const typeBikes = bikes.filter(bike => {
     return typeValue === "all" || bike.type === typeValue;
   });
 
-  renderBrandOptions(typeFiltered);
+  updateBrandOptions(typeBikes);
 
-  const filtered = typeFiltered.filter(bike => {
+  const filtered = typeBikes.filter(bike => {
     const matchBrand =
       brandValue === "all" || bike.brand === brandValue;
 
-    const matchSearch =
-      (bike.name || "").toLowerCase().includes(searchValue) ||
-      (bike.brand || "").toLowerCase().includes(searchValue) ||
-      (bike.type || "").toLowerCase().includes(searchValue) ||
-      String(bike.year || "").includes(searchValue);
+    const searchableText = [
+      bike.name,
+      bike.brand,
+      bike.type,
+      bike.year
+    ].join(" ").toLowerCase();
 
-    return matchBrand && matchSearch;
+    return matchBrand && searchableText.includes(keyword);
   });
 
   render(filtered);
+}
+
+async function loadBikes() {
+  const snap = await getDocs(collection(db, "bikes"));
+
+  bikes = snap.docs.map(docSnap => ({
+    id: docSnap.id,
+    ...docSnap.data()
+  }));
+
+  updateBrandOptions(bikes);
+  render(bikes);
 }
 
 typeFilter.addEventListener("change", () => {

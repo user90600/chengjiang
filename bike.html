@@ -34,44 +34,50 @@ import { db } from "./firebase.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
 const params = new URLSearchParams(location.search);
-const id = params.get("id");
+const bikeId = params.get("id");
 const bikeDetail = document.getElementById("bikeDetail");
 
 async function loadBike() {
-  const ref = doc(db, "bikes", id);
-  const snap = await getDoc(ref);
+  if (!bikeId) {
+    bikeDetail.innerHTML = "<h2>找不到車輛資料。</h2>";
+    return;
+  }
+
+  const bikeRef = doc(db, "bikes", bikeId);
+  const snap = await getDoc(bikeRef);
 
   if (!snap.exists()) {
-    bikeDetail.innerHTML = "<h2>找不到車輛資料</h2>";
+    bikeDetail.innerHTML = "<h2>找不到車輛資料。</h2>";
     return;
   }
 
   const bike = snap.data();
   const images = bike.images || [];
 
-  const lineText = encodeURIComponent(
-    `您好，我想預約看車：${bike.name || ""}\n年份：${bike.year || ""}\n里程：${bike.km || ""} km\n價格：NT$${bike.price || ""}`
-  );
-
   bikeDetail.innerHTML = `
     <div style="
       max-width:1200px;
       margin:auto;
       display:grid;
-      grid-template-columns:1.15fr 0.85fr;
+      grid-template-columns:1.15fr .85fr;
       gap:50px;
       align-items:start;
     ">
 
       <div>
-        <img id="mainImage" src="${images[0] || ""}" style="
-          width:100%;
-          height:460px;
-          object-fit:cover;
-          border-radius:18px;
-          box-shadow:0 18px 40px rgba(0,0,0,.18);
-          background:#f2f2f2;
-        ">
+        <img
+          id="mainImage"
+          src="${images[0] || ""}"
+          alt="${bike.name || "車輛圖片"}"
+          style="
+            width:100%;
+            height:460px;
+            object-fit:cover;
+            border-radius:18px;
+            box-shadow:0 18px 40px rgba(0,0,0,.18);
+            background:#f2f2f2;
+          "
+        >
 
         <div style="
           display:grid;
@@ -82,6 +88,7 @@ async function loadBike() {
           ${images.slice(0, 4).map(img => `
             <img
               src="${img}"
+              alt="車輛照片"
               onclick="document.getElementById('mainImage').src='${img}'"
               style="
                 width:100%;
@@ -104,12 +111,11 @@ async function loadBike() {
         padding:34px;
         box-shadow:0 10px 32px rgba(0,0,0,.08);
       ">
-
         <p style="
           color:#c9a227;
           letter-spacing:2px;
           font-size:15px;
-          margin-bottom:10px;
+          margin:0 0 10px;
           font-weight:700;
         ">
           CHENG JIANG SELECTED
@@ -153,13 +159,12 @@ async function loadBike() {
         <div style="margin-top:34px;">
           <a
             class="btn"
-            href="https://line.me/R/ti/p/@chengjiang?text=${lineText}"
+            href="https://line.me/R/ti/p/~jun1127."
             target="_blank"
           >
             立即預約看車
           </a>
         </div>
-
       </div>
 
     </div>
