@@ -256,11 +256,12 @@ body {
 }
 
 .feature-grid {
-  grid-template-columns: repeat(4, minmax(190px, 250px));
+  grid-template-columns: repeat(4, minmax(240px, 300px));
+  gap: 34px;
 }
 
 .feature-card {
-  padding: 28px 20px;
+  padding: 30px 26px;
   border: 1px solid rgba(201, 162, 39, 0.32);
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.035);
