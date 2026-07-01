@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>車輛列表｜誠匠二輪</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="navbar">
+  <div class="logo">誠匠二輪</div>
+  <nav>
+    <a href="index.html">首頁</a>
+    <a href="inventory.html">車輛列表</a>
+    <a href="sell.html">我要賣車</a>
+    <a href="admin.html" id="adminBtn" style="display:none;">後台</a>
+  </nav>
+</header>
+
+<section class="section">
+  <h1>車輛總覽</h1>
+
+  <select id="typeFilter" class="search-box">
+    <option value="all">全部車種</option>
+    <option value="速克達">速克達</option>
+    <option value="輕檔車">輕檔車</option>
+    <option value="大型重機">大型重機</option>
+    <option value="電動車">電動車</option>
+  </select>
+
+  <select id="brandFilter" class="search-box">
+    <option value="all">全部品牌</option>
+  </select>
+
+  <input id="searchInput" class="search-box" placeholder="搜尋車款 / 品牌 / 年份">
+
+  <div id="bikeList" class="grid"></div>
+</section>
+
+<script>
+if (localStorage.getItem("isAdmin") === "true") {
+  document.getElementById("adminBtn").style.display = "inline-block";
+}
+</script>
+
+<script type="module">
+import { db, collection, getDocs } from "./firebase.js";
+
+const container = document.getElementById("bikeList");
+const searchInput = document.getElementById("searchInput");
+const brandFilter = document.getElementById("brandFilter");
+const typeFilter = document.getElementById("typeFilter");
+
+let bikes = [];
+
+async function loadBikes() {
+  const snap = await getDocs(collection(db, "bikes"));
+
+  bikes = snap.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  }));
+
+  renderBrandOptions(bikes);
+  render(bikes);
+}
+
+function renderBrandOptions(sourceList) {
+  const selectedBrand = brandFilter.value;
+  const brands = [...new Set(sourceList.map(b => b.brand).filter(Boolean))];
+
+  brandFilter.innerHTML = `<option value="all">全部品牌</option>`;
+
+  brands.forEach(brand => {
+    brandFilter.innerHTML += `<option value="${brand}">${brand}</option>`;
+  });
+
+  if (brands.includes(selectedBrand)) {
+    brandFilter.value = selectedBrand;
+  }
+}
+
+function render(list) {
+  container.innerHTML = list.map(bike => `
+    <a href="bike.html?id=${bike.id}" class="card">
+      <img src="${bike.images?.[0] || ""}" alt="${bike.name}">
+      <h3>${bike.name}</h3>
+      <p>${bike.type || "未分類"}｜${bike.brand}</p>
+      <p>${bike.year}｜${bike.km} km</p>
+      <p>NT$${bike.price}</p>
+    </a>
+  `).join("");
+}
+
+function applyFilters() {
+  const searchValue = searchInput.value.toLowerCase();
+  const typeValue = typeFilter.value;
+  const brandValue = brandFilter.value;
+
+  let typeFiltered = bikes.filter(bike => {
+    return typeValue === "all" || bike.type === typeValue;
+  });
+
+  renderBrandOptions(typeFiltered);
+
+  const filtered = typeFiltered.filter(bike => {
+    const matchBrand =
+      brandValue === "all" || bike.brand === brandValue;
+
+    const matchSearch =
+      (bike.name || "").toLowerCase().includes(searchValue) ||
+      (bike.brand || "").toLowerCase().includes(searchValue) ||
+      (bike.type || "").toLowerCase().includes(searchValue) ||
+      String(bike.year || "").includes(searchValue);
+
+    return matchBrand && matchSearch;
+  });
+
+  render(filtered);
+}
+
+typeFilter.addEventListener("change", () => {
+  brandFilter.value = "all";
+  applyFilters();
+});
+
+brandFilter.addEventListener("change", applyFilters);
+searchInput.addEventListener("input", applyFilters);
+
+loadBikes();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>後台管理｜誠匠二輪</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="navbar">
+  <div class="logo">誠匠二輪 後台</div>
+  <nav>
+    <a href="index.html">返回首頁</a>
+    <a href="inventory.html">車輛列表</a>
+  </nav>
+</header>
+
+<section class="section">
+  <h2 id="formTitle">新增車輛</h2>
+
+  <div style="max-width:800px; margin:auto;">
+
+    <input id="name" class="search-box" placeholder="車名">
+
+    <select id="brand" class="search-box">
+      <option value="">選擇品牌</option>
+      <option>YAMAHA</option>
+      <option>HONDA</option>
+      <option>KAWASAKI</option>
+      <option>SYM</option>
+      <option>KYMCO</option>
+      <option>SUZUKI</option>
+      <option>GOGORO</option>
+      <option>CFMOTO</option>
+      <option>APRILIA</option>
+    </select>
+
+    <select id="type" class="search-box">
+      <option value="">選擇車種</option>
+      <option>機車</option>
+      <option>輕檔車</option>
+      <option>重機</option>
+      <option>電動車</option>
+    </select>
+
+    <input id="year" class="search-box" placeholder="年份">
+    <input id="km" class="search-box" placeholder="里程">
+    <input id="price" class="search-box" placeholder="售價">
+    <input id="cc" class="search-box" placeholder="排氣量">
+    <input id="condition" class="search-box" placeholder="車況">
+    <input id="location" class="search-box" placeholder="所在地">
+    <input id="mods" class="search-box" placeholder="改裝品">
+
+    <input id="images" type="file" multiple accept="image/*" class="search-box">
+
+    <button id="submitBtn" class="btn" style="margin-top:20px;">
+      新增車輛
+    </button>
+
+  </div>
+</section>
+
+<section class="section">
+  <h2>已上架車輛</h2>
+  <div id="bikeList" class="grid"></div>
+</section>
+
+<script type="module">
+import { db } from "./firebase.js";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  doc,
+  updateDoc,
+  deleteDoc
+} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
+const CLOUD_NAME = "bjw5m0af";
+const UPLOAD_PRESET = "tnfxxoqb";
+
+let editingId = null;
+
+async function uploadToCloudinary(file) {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", UPLOAD_PRESET);
+
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+    {
+      method: "POST",
+      body: formData
+    }
+  );
+
+  const data = await res.json();
+  return data.secure_url;
+}
+
+async function saveBike() {
+  const files = document.getElementById("images").files;
+  let imageUrls = [];
+
+  if (files.length > 0) {
+    for (const file of files) {
+      const url = await uploadToCloudinary(file);
+      imageUrls.push(url);
+    }
+  }
+
+  const bikeData = {
+    name: document.getElementById("name").value,
+    brand: document.getElementById("brand").value,
+    type: document.getElementById("type").value,
+    year: document.getElementById("year").value,
+    km: document.getElementById("km").value,
+    price: document.getElementById("price").value,
+    cc: document.getElementById("cc").value,
+    condition: document.getElementById("condition").value,
+    location: document.getElementById("location").value,
+    mods: document.getElementById("mods").value
+  };
+
+  if (imageUrls.length > 0) {
+    bikeData.images = imageUrls;
+  }
+
+  if (editingId) {
+    await updateDoc(doc(db, "bikes", editingId), bikeData);
+
+    alert("更新成功");
+    editingId = null;
+
+    document.getElementById("submitBtn").innerText = "新增車輛";
+    document.getElementById("formTitle").innerText = "新增車輛";
+  } else {
+    await addDoc(collection(db, "bikes"), bikeData);
+    alert("新增成功");
+  }
+
+  location.reload();
+}
+
+document.getElementById("submitBtn").addEventListener("click", saveBike);
+
+async function loadBikes() {
+  const snap = await getDocs(collection(db, "bikes"));
+  const bikeList = document.getElementById("bikeList");
+
+  const bikes = snap.docs.map(docSnap => ({
+    id: docSnap.id,
+    ...docSnap.data()
+  }));
+
+  bikeList.innerHTML = bikes.map(bike => `
+    <div class="card">
+      <img src="${bike.images?.[0] || ""}">
+      <h3>${bike.name}</h3>
+      <p>NT$${bike.price}</p>
+
+      <div style="display:flex; gap:10px; margin-top:15px;">
+        <button class="btn edit-btn" data-id="${bike.id}">
+          編輯
+        </button>
+
+        <button class="btn delete-btn" data-id="${bike.id}">
+          刪除
+        </button>
+      </div>
+    </div>
+  `).join("");
+
+  document.querySelectorAll(".edit-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const bike = bikes.find(b => b.id === btn.dataset.id);
+
+      if (!bike) return;
+
+      editingId = bike.id;
+
+      document.getElementById("name").value = bike.name || "";
+      document.getElementById("brand").value = bike.brand || "";
+      document.getElementById("type").value = bike.type || "";
+      document.getElementById("year").value = bike.year || "";
+      document.getElementById("km").value = bike.km || "";
+      document.getElementById("price").value = bike.price || "";
+      document.getElementById("cc").value = bike.cc || "";
+      document.getElementById("condition").value = bike.condition || "";
+      document.getElementById("location").value = bike.location || "";
+      document.getElementById("mods").value = bike.mods || "";
+
+      document.getElementById("submitBtn").innerText = "儲存修改";
+      document.getElementById("formTitle").innerText = "編輯車輛";
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    });
+  });
+
+  document.querySelectorAll(".delete-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const id = btn.dataset.id;
+
+      if (!confirm("確定刪除這台車？")) return;
+
+      await deleteDoc(doc(db, "bikes", id));
+
+      alert("刪除成功");
+      loadBikes();
+    });
+  });
+}
+
+loadBikes();
+</script>
+
+</body>
+</html>

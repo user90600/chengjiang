@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我要賣車｜誠匠二輪</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="navbar">
+  <div class="logo">誠匠二輪</div>
+  <nav>
+    <a href="index.html">首頁</a>
+    <a href="inventory.html">車輛列表</a>
+    <a href="sell.html">我要賣車</a>
+    <a href="admin.html" id="adminBtn" style="display:none;">後台</a>
+  </nav>
+</header>
+
+<section class="section">
+  <h2>線上估價</h2>
+
+  <div style="
+    max-width:1000px;
+    margin:auto;
+    text-align:center;
+  ">
+
+    <p style="
+      font-size:20px;
+      line-height:2;
+      margin-bottom:18px;
+      color:#555;
+    ">
+      填寫基本資料後送出，我們將盡快與您聯繫並提供初步估價。
+    </p>
+
+    <p style="
+      font-size:17px;
+      line-height:1.8;
+      color:#c9a227;
+      font-weight:600;
+      margin-bottom:40px;
+    ">
+      ※ 為了提供更準確估價，送出後請於 LINE 補充至少
+      「車頭、左側、右側、車尾」照片，
+      如有明顯刮傷或改裝部位也建議一併提供。
+    </p>
+
+    <div style="
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:22px;
+      align-items:start;
+    ">
+
+      <input id="name" class="search-box" placeholder="姓名">
+      <input id="phone" class="search-box" placeholder="聯絡電話">
+
+      <input id="bike" class="search-box" placeholder="車款名稱">
+      <input id="year" class="search-box" placeholder="年份">
+
+      <input id="km" class="search-box" placeholder="里程">
+      <input id="price" class="search-box" placeholder="預售價格">
+
+      <textarea
+  id="mods"
+  class="search-box"
+  placeholder="改裝品（例如：拉桿、排氣管、避震、卡鉗、鍊條...）"
+  style="
+    min-height:160px;
+    resize:none;
+  "
+></textarea>
+
+      <textarea
+        id="note"
+        class="search-box"
+        placeholder="其他補充（例如車況、事故紀錄、保養狀況）"
+        style="
+          min-height:160px;
+          resize:none;
+        "
+      ></textarea>
+
+    </div>
+
+    <button id="sendBtn" class="btn" style="
+      margin-top:35px;
+      min-width:180px;
+    ">
+      送出估價需求
+    </button>
+
+  </div>
+</section>
+
+<footer class="footer">
+  <p>誠匠二輪｜中古機車專賣</p>
+</footer>
+
+<script>
+if (localStorage.getItem("isAdmin") === "true") {
+  document.getElementById("adminBtn").style.display = "inline-block";
+}
+
+document.getElementById("sendBtn").addEventListener("click", () => {
+  const name = document.getElementById("name").value;
+  const phone = document.getElementById("phone").value;
+  const bike = document.getElementById("bike").value;
+  const year = document.getElementById("year").value;
+  const km = document.getElementById("km").value;
+  const price = document.getElementById("price").value;
+  const mods = document.getElementById("mods").value;
+  const note = document.getElementById("note").value;
+
+  const text = encodeURIComponent(
+`您好，我想估價賣車：
+
+姓名：${name}
+聯絡電話：${phone}
+車款：${bike}
+年份：${year}
+里程：${km}
+預售價格：${price}
+改裝品：${mods}
+備註：${note}
+
+請再補充：
+車頭 / 左側 / 右側 / 車尾 照片，
+以利更精準估價，謝謝。`
+  );
+
+  const lineLink = `https://line.me/R/ti/p/~jun1127.?text=${text}`;
+  window.open(lineLink, "_blank");
+});
+</script>
+
+</body>
+</html>

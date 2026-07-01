@@ -1,0 +1,364 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;700;900&display=swap');
+
+:root {
+  --black: #080808;
+  --black-soft: #141414;
+  --gold: #c9a227;
+  --gold-light: #e2c76a;
+  --white: #ffffff;
+  --bg: #f7f7f7;
+  --text: #111;
+  --gray: #666;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Noto Serif TC", "PingFang TC", "Microsoft JhengHei", serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* 導覽列 */
+.navbar {
+  background: #070707;
+  padding: 22px 45px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(201,162,39,.35);
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+.logo {
+  color: var(--gold);
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.navbar nav {
+  display: flex;
+  align-items: center;
+  gap: 34px;
+}
+
+.navbar a {
+  text-decoration: none;
+  color: white;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.navbar a:hover {
+  color: var(--gold);
+}
+
+/* Hero */
+.hero {
+  min-height: 82vh;
+  background:
+    radial-gradient(circle at 80% 40%, rgba(201,162,39,.18), transparent 28%),
+    linear-gradient(135deg, #050505 0%, #111 45%, #070707 100%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 90px;
+  padding: 80px 7%;
+  color: white;
+}
+
+.hero-left {
+  flex: 0 0 43%;
+}
+
+.hero-right {
+  flex: 0 0 48%;
+  display: flex;
+  justify-content: center;
+}
+
+.hero-right img {
+  width: 100%;
+  max-width: 540px !important;
+  border-radius: 18px;
+  box-shadow: 0 25px 55px rgba(0,0,0,.55);
+  object-fit: cover;
+}
+
+.hero h1 {
+  font-size: 64px;
+  line-height: 1.2;
+  margin: 15px 0 20px;
+  font-weight: 900;
+}
+
+.hero p {
+  font-size: 21px;
+  line-height: 1.9;
+  color: #ddd;
+}
+
+/* 按鈕 */
+.btn {
+  display: inline-block;
+  padding: 14px 30px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 17px;
+  font-weight: bold;
+  margin: 10px 8px 0 0;
+  background: var(--gold);
+  color: black;
+  transition: .25s;
+  border: 1px solid var(--gold);
+}
+
+.btn:hover {
+  background: var(--gold-light);
+  transform: translateY(-2px);
+}
+
+/* 區塊 */
+.section {
+  padding: 42px 50px;
+  text-align: center;
+}
+
+.section h2 {
+  text-align: center;
+  font-size: 40px;
+  margin: 0 0 24px;
+  position: relative;
+  font-weight: 900;
+}
+
+.section h2::before,
+.section h2::after {
+  content: "";
+  display: inline-block;
+  width: 80px;
+  height: 2px;
+  background: var(--gold);
+  vertical-align: middle;
+  margin: 0 18px;
+}
+
+.section h3 {
+  font-size: 22px;
+  margin: 22px 0 8px;
+  font-weight: 900;
+}
+
+.section p {
+  font-size: 20px;
+  line-height: 1.85;
+  margin: 8px 0;
+}
+
+.section.dark {
+  background: var(--black);
+  color: white;
+}
+
+/* 交易流程圖置中 */
+.process-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.process-img {
+  width: 100%;
+  max-width: 1100px;
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(0,0,0,.08);
+  margin-top: 18px;
+  display: block;
+}
+
+/* Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 280px));
+  justify-content: center;
+  gap: 26px;
+  margin-top: 26px;
+}
+
+/* 車卡 */
+.card {
+  background: white;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 8px 28px rgba(0,0,0,.08);
+  text-decoration: none;
+  color: #111;
+  transition: .28s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 36px rgba(0,0,0,.15);
+}
+
+.card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  object-position: center;
+  background: #f4f4f4;
+}
+
+.card h3 {
+  padding: 14px 18px 6px;
+  margin: 0;
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.card p {
+  padding: 0 18px;
+  margin: 6px 0;
+  font-size: 16px;
+  color: #555;
+  line-height: 1.6;
+}
+
+.card p:last-child {
+  color: var(--gold);
+  font-size: 22px;
+  font-weight: 900;
+  padding-bottom: 16px;
+}
+
+/* 搜尋 */
+.search-box {
+  width: 100%;
+  max-width: 360px;
+  padding: 14px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin: 10px;
+  font-size: 16px;
+  background: white;
+  font-family: inherit;
+}
+
+/* 詳細頁輪播 */
+.carousel img {
+  width: 100%;
+  max-width: 680px;
+  border-radius: 14px;
+  object-fit: cover;
+}
+
+.carousel button {
+  background: var(--black);
+  color: white;
+  border: none;
+  padding: 12px 22px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* 表單 */
+input,
+select,
+textarea,
+button {
+  font-family: inherit;
+}
+
+/* Footer */
+.footer {
+  background: var(--black);
+  color: white;
+  text-align: center;
+  padding: 30px;
+  border-top: 1px solid rgba(201,162,39,.25);
+}
+
+/* 手機版 */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 18px 20px;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .navbar nav {
+    gap: 18px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .logo {
+    font-size: 26px;
+  }
+
+  .hero {
+    flex-direction: column;
+    padding: 50px 24px;
+    gap: 35px;
+    min-height: auto;
+  }
+
+  .hero-left,
+  .hero-right {
+    flex: 1 1 100%;
+  }
+
+  .hero h1 {
+    font-size: 42px;
+  }
+
+  .hero p {
+    font-size: 18px;
+  }
+
+  .hero-right img {
+    max-width: 100% !important;
+  }
+
+  .section {
+    padding: 36px 20px;
+  }
+
+  .section h2 {
+    font-size: 30px;
+  }
+
+  .section h2::before,
+  .section h2::after {
+    width: 40px;
+    margin: 0 10px;
+  }
+
+  .section p {
+    font-size: 18px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(170px, 220px));
+  }
+
+  .card img {
+    height: 170px;
+  }
+
+  .card h3 {
+    font-size: 19px;
+  }
+
+  .card p:last-child {
+    font-size: 19px;
+  }
+}

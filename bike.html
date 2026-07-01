@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>車輛詳情｜誠匠二輪</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="navbar">
+  <div class="logo">誠匠二輪</div>
+  <nav>
+    <a href="index.html">首頁</a>
+    <a href="inventory.html">車輛列表</a>
+    <a href="sell.html">我要賣車</a>
+    <a href="admin.html" id="adminBtn" style="display:none;">後台</a>
+  </nav>
+</header>
+
+<section class="section">
+  <div id="bikeDetail"></div>
+</section>
+
+<script>
+if (localStorage.getItem("isAdmin") === "true") {
+  document.getElementById("adminBtn").style.display = "inline-block";
+}
+</script>
+
+<script type="module">
+import { db } from "./firebase.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
+const params = new URLSearchParams(location.search);
+const id = params.get("id");
+const bikeDetail = document.getElementById("bikeDetail");
+
+async function loadBike() {
+  const ref = doc(db, "bikes", id);
+  const snap = await getDoc(ref);
+
+  if (!snap.exists()) {
+    bikeDetail.innerHTML = "<h2>找不到車輛資料</h2>";
+    return;
+  }
+
+  const bike = snap.data();
+  const images = bike.images || [];
+
+  const lineText = encodeURIComponent(
+    `您好，我想預約看車：${bike.name || ""}\n年份：${bike.year || ""}\n里程：${bike.km || ""} km\n價格：NT$${bike.price || ""}`
+  );
+
+  bikeDetail.innerHTML = `
+    <div style="
+      max-width:1200px;
+      margin:auto;
+      display:grid;
+      grid-template-columns:1.15fr 0.85fr;
+      gap:50px;
+      align-items:start;
+    ">
+
+      <div>
+        <img id="mainImage" src="${images[0] || ""}" style="
+          width:100%;
+          height:460px;
+          object-fit:cover;
+          border-radius:18px;
+          box-shadow:0 18px 40px rgba(0,0,0,.18);
+          background:#f2f2f2;
+        ">
+
+        <div style="
+          display:grid;
+          grid-template-columns:repeat(4, 1fr);
+          gap:12px;
+          margin-top:16px;
+        ">
+          ${images.slice(0, 4).map(img => `
+            <img
+              src="${img}"
+              onclick="document.getElementById('mainImage').src='${img}'"
+              style="
+                width:100%;
+                height:90px;
+                object-fit:cover;
+                border-radius:10px;
+                cursor:pointer;
+                border:2px solid #ddd;
+                background:#f4f4f4;
+              "
+            >
+          `).join("")}
+        </div>
+      </div>
+
+      <div style="
+        text-align:left;
+        background:#fff;
+        border-radius:18px;
+        padding:34px;
+        box-shadow:0 10px 32px rgba(0,0,0,.08);
+      ">
+
+        <p style="
+          color:#c9a227;
+          letter-spacing:2px;
+          font-size:15px;
+          margin-bottom:10px;
+          font-weight:700;
+        ">
+          CHENG JIANG SELECTED
+        </p>
+
+        <h1 style="
+          font-size:42px;
+          margin:0 0 12px;
+          line-height:1.3;
+        ">
+          ${bike.name || "-"}
+        </h1>
+
+        <p style="
+          font-size:34px;
+          color:#c9a227;
+          font-weight:900;
+          margin:0 0 28px;
+        ">
+          NT$${bike.price || "-"}
+        </p>
+
+        <div style="
+          display:grid;
+          grid-template-columns:120px 1fr;
+          row-gap:15px;
+          column-gap:15px;
+          font-size:18px;
+          line-height:1.8;
+        ">
+          <strong>年份</strong><span>${bike.year || "-"}</span>
+          <strong>里程</strong><span>${bike.km || "-"} km</span>
+          <strong>車種</strong><span>${bike.type || "-"}</span>
+          <strong>品牌</strong><span>${bike.brand || "-"}</span>
+          <strong>排氣量</strong><span>${bike.cc || "-"}</span>
+          <strong>車況</strong><span>${bike.condition || "-"}</span>
+          <strong>所在地</strong><span>${bike.location || "-"}</span>
+          <strong>改裝品</strong><span>${bike.mods || "-"}</span>
+        </div>
+
+        <div style="margin-top:34px;">
+          <a
+            class="btn"
+            href="https://line.me/R/ti/p/@chengjiang?text=${lineText}"
+            target="_blank"
+          >
+            立即預約看車
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  `;
+}
+
+loadBike();
+</script>
+
+</body>
+</html>
