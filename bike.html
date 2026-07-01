@@ -11,11 +11,12 @@
 
 <header class="navbar">
   <div class="logo">誠匠二輪</div>
+
   <nav>
     <a href="index.html">首頁</a>
     <a href="inventory.html">車輛列表</a>
     <a href="sell.html">我要賣車</a>
-    <a href="admin.html" id="adminBtn" style="display:none;">後台</a>
+    <a href="admin.html" id="adminBtn" style="display: none;">後台</a>
   </nav>
 </header>
 
@@ -31,7 +32,11 @@ if (localStorage.getItem("isAdmin") === "true") {
 
 <script type="module">
 import { db } from "./firebase.js";
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
+import {
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
 const params = new URLSearchParams(location.search);
 const bikeId = params.get("id");
@@ -44,60 +49,62 @@ async function loadBike() {
   }
 
   const bikeRef = doc(db, "bikes", bikeId);
-  const snap = await getDoc(bikeRef);
+  const snapshot = await getDoc(bikeRef);
 
-  if (!snap.exists()) {
+  if (!snapshot.exists()) {
     bikeDetail.innerHTML = "<h2>找不到車輛資料。</h2>";
     return;
   }
 
-  const bike = snap.data();
+  const bike = snapshot.data();
   const images = bike.images || [];
+  const mainImage = images[0] || "";
 
   bikeDetail.innerHTML = `
     <div style="
-      max-width:1200px;
-      margin:auto;
-      display:grid;
-      grid-template-columns:1.15fr .85fr;
-      gap:50px;
-      align-items:start;
+      max-width: 1200px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 50px;
+      align-items: start;
     ">
 
       <div>
         <img
           id="mainImage"
-          src="${images[0] || ""}"
+          src="${mainImage}"
           alt="${bike.name || "車輛圖片"}"
           style="
-            width:100%;
-            height:460px;
-            object-fit:cover;
-            border-radius:18px;
-            box-shadow:0 18px 40px rgba(0,0,0,.18);
-            background:#f2f2f2;
+            width: 100%;
+            height: 460px;
+            object-fit: cover;
+            border-radius: 18px;
+            box-shadow: 0 18px 40px rgba(0,0,0,.18);
+            background: #f2f2f2;
           "
         >
 
         <div style="
-          display:grid;
-          grid-template-columns:repeat(4, 1fr);
-          gap:12px;
-          margin-top:16px;
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 12px;
+          margin-top: 16px;
         ">
-          ${images.slice(0, 4).map(img => `
+          ${images.slice(0, 4).map((image, index) => `
             <img
-              src="${img}"
-              alt="車輛照片"
-              onclick="document.getElementById('mainImage').src='${img}'"
+              src="${image}"
+              alt="主要照片 ${index + 1}"
+              class="main-thumb"
+              data-image="${image}"
               style="
-                width:100%;
-                height:90px;
-                object-fit:cover;
-                border-radius:10px;
-                cursor:pointer;
-                border:2px solid #ddd;
-                background:#f4f4f4;
+                width: 100%;
+                height: 90px;
+                object-fit: cover;
+                border-radius: 10px;
+                cursor: pointer;
+                border: 2px solid ${index === 0 ? "#c9a227" : "#ddd"};
+                background: #f4f4f4;
               "
             >
           `).join("")}
@@ -105,46 +112,46 @@ async function loadBike() {
       </div>
 
       <div style="
-        text-align:left;
-        background:#fff;
-        border-radius:18px;
-        padding:34px;
-        box-shadow:0 10px 32px rgba(0,0,0,.08);
+        text-align: left;
+        background: #fff;
+        border-radius: 18px;
+        padding: 34px;
+        box-shadow: 0 10px 32px rgba(0,0,0,.08);
       ">
         <p style="
-          color:#c9a227;
-          letter-spacing:2px;
-          font-size:15px;
-          margin:0 0 10px;
-          font-weight:700;
+          color: #c9a227;
+          letter-spacing: 2px;
+          font-size: 15px;
+          margin: 0 0 10px;
+          font-weight: 700;
         ">
           CHENG JIANG SELECTED
         </p>
 
         <h1 style="
-          font-size:42px;
-          margin:0 0 12px;
-          line-height:1.3;
+          font-size: 42px;
+          margin: 0 0 12px;
+          line-height: 1.3;
         ">
           ${bike.name || "-"}
         </h1>
 
         <p style="
-          font-size:34px;
-          color:#c9a227;
-          font-weight:900;
-          margin:0 0 28px;
+          font-size: 34px;
+          color: #c9a227;
+          font-weight: 900;
+          margin: 0 0 28px;
         ">
           NT$${bike.price || "-"}
         </p>
 
         <div style="
-          display:grid;
-          grid-template-columns:120px 1fr;
-          row-gap:15px;
-          column-gap:15px;
-          font-size:18px;
-          line-height:1.8;
+          display: grid;
+          grid-template-columns: 120px 1fr;
+          row-gap: 15px;
+          column-gap: 15px;
+          font-size: 18px;
+          line-height: 1.8;
         ">
           <strong>年份</strong><span>${bike.year || "-"}</span>
           <strong>里程</strong><span>${bike.km || "-"} km</span>
@@ -156,19 +163,146 @@ async function loadBike() {
           <strong>改裝品</strong><span>${bike.mods || "-"}</span>
         </div>
 
-        <div style="margin-top:34px;">
+        <div style="margin-top: 34px;">
           <a
             class="btn"
-            href="https://line.me/R/ti/p/~jun1127."
+            href="https://line.me/ti/p/~jun1127."
             target="_blank"
           >
-            立即預約看車
+            加入 LINE 預約看車
           </a>
         </div>
       </div>
+    </div>
 
+    ${images.length > 4 ? `
+      <div style="
+        max-width: 1200px;
+        margin: 70px auto 0;
+        text-align: left;
+      ">
+        <h2 style="text-align: center; margin-bottom: 12px;">
+          車況與精品細節
+        </h2>
+
+        <p style="
+          text-align: center;
+          color: #666;
+          margin-bottom: 30px;
+        ">
+          點擊照片可放大查看
+        </p>
+
+        <div id="detailGallery" style="
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+          gap: 18px;
+        ">
+          ${images.slice(4).map((image, index) => `
+            <img
+              src="${image}"
+              alt="車輛細節照片 ${index + 1}"
+              class="detail-image"
+              data-image="${image}"
+              style="
+                width: 100%;
+                height: 220px;
+                object-fit: cover;
+                border-radius: 14px;
+                cursor: pointer;
+                box-shadow: 0 8px 22px rgba(0,0,0,.1);
+              "
+            >
+          `).join("")}
+        </div>
+      </div>
+    ` : ""}
+
+    <div
+      id="imageModal"
+      style="
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: rgba(0,0,0,.88);
+        padding: 30px;
+        align-items: center;
+        justify-content: center;
+      "
+    >
+      <button
+        id="closeModal"
+        type="button"
+        style="
+          position: absolute;
+          top: 18px;
+          right: 24px;
+          background: transparent;
+          border: none;
+          color: white;
+          font-size: 42px;
+          cursor: pointer;
+        "
+      >
+        ×
+      </button>
+
+      <img
+        id="modalImage"
+        src=""
+        alt="放大照片"
+        style="
+          max-width: 95%;
+          max-height: 88vh;
+          border-radius: 12px;
+          object-fit: contain;
+        "
+      >
     </div>
   `;
+
+  const mainImageElement = document.getElementById("mainImage");
+  const modal = document.getElementById("imageModal");
+  const modalImage = document.getElementById("modalImage");
+  const closeModal = document.getElementById("closeModal");
+
+  function openImage(imageUrl) {
+    modalImage.src = imageUrl;
+    modal.style.display = "flex";
+  }
+
+  document.querySelectorAll(".main-thumb").forEach(image => {
+    image.addEventListener("click", () => {
+      mainImageElement.src = image.dataset.image;
+
+      document.querySelectorAll(".main-thumb").forEach(item => {
+        item.style.borderColor = "#ddd";
+      });
+
+      image.style.borderColor = "#c9a227";
+    });
+  });
+
+  document.querySelectorAll(".detail-image").forEach(image => {
+    image.addEventListener("click", () => {
+      openImage(image.dataset.image);
+    });
+  });
+
+  mainImageElement.addEventListener("click", () => {
+    openImage(mainImageElement.src);
+  });
+
+  closeModal.addEventListener("click", () => {
+    modal.style.display = "none";
+  });
+
+  modal.addEventListener("click", event => {
+    if (event.target === modal) {
+      modal.style.display = "none";
+    }
+  });
 }
 
 loadBike();

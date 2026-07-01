@@ -11,6 +11,7 @@
 
 <header class="navbar">
   <div class="logo">誠匠二輪｜後台</div>
+
   <nav>
     <a href="index.html">返回首頁</a>
     <a href="inventory.html">車輛列表</a>
@@ -20,7 +21,7 @@
 <section class="section">
   <h2 id="formTitle">新增車輛</h2>
 
-  <div style="max-width:900px; margin:auto;">
+  <div style="max-width: 900px; margin: auto;">
     <input id="name" class="search-box" placeholder="車名，例如 YAMAHA R15 V3">
 
     <input
@@ -34,14 +35,14 @@
       <option value="YAMAHA">
       <option value="HONDA">
       <option value="KAWASAKI">
+      <option value="SUZUKI">
       <option value="SYM">
       <option value="KYMCO">
-      <option value="SUZUKI">
-      <option value="GOGORO">
       <option value="CFMOTO">
       <option value="APRILIA">
       <option value="BMW">
       <option value="Vespa">
+      <option value="TRIUMPH">
     </datalist>
 
     <select id="type" class="search-box">
@@ -63,32 +64,42 @@
       id="mods"
       class="search-box"
       placeholder="改裝品，例如 短拉桿、腳踏後移、排氣管、防倒球"
-      style="min-height:130px; resize:vertical;"
+      style="min-height: 120px; resize: vertical;"
     ></textarea>
 
-    <p style="margin:25px 0 10px; font-weight:bold;">
-      車輛照片：請依序選擇 車頭 / 左側 / 右側 / 車尾
-    </p>
+    <div style="margin-top: 28px; text-align: left;">
+      <p style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">
+        車輛照片
+      </p>
 
-    <input
-      id="images"
-      type="file"
-      multiple
-      accept="image/*"
-      class="search-box"
-    >
+      <p style="color: #666; line-height: 1.8; margin-top: 0;">
+        前 4 張請依序放：車頭、左側、右側、車尾。<br>
+        後面的照片可以放儀表、輪胎、引擎、精品改裝、排氣管、刮痕或其他細節。
+      </p>
 
-    <p id="editTip" style="display:none; color:#c9a227; font-size:16px;">
-      編輯中：若不重新選照片，會保留原本車輛照片。
-    </p>
+      <input
+        id="images"
+        type="file"
+        multiple
+        accept="image/*"
+        class="search-box"
+      >
 
-    <div style="margin-top:20px;">
+      <p id="photoCount" style="color: #c9a227; font-size: 15px;"></p>
+
+      <p id="editTip" style="display: none; color: #c9a227; font-size: 16px;">
+        編輯中：沒有重新選照片的話，會保留原本所有照片。
+      </p>
+    </div>
+
+    <div style="margin-top: 24px;">
       <button id="submitBtn" class="btn" type="button">新增車輛</button>
+
       <button
         id="cancelBtn"
         class="btn"
         type="button"
-        style="display:none; background:transparent; color:#c9a227;"
+        style="display: none; background: transparent; color: #c9a227;"
       >
         取消編輯
       </button>
@@ -103,6 +114,7 @@
 
 <script type="module">
 import { db } from "./firebase.js";
+
 import {
   collection,
   addDoc,
@@ -132,13 +144,26 @@ const cancelBtn = document.getElementById("cancelBtn");
 const formTitle = document.getElementById("formTitle");
 const editTip = document.getElementById("editTip");
 const bikeList = document.getElementById("bikeList");
+const photoCount = document.getElementById("photoCount");
 
 let editingId = null;
 let editingBike = null;
 let bikes = [];
 
+imagesInput.addEventListener("change", () => {
+  const count = imagesInput.files.length;
+
+  if (count === 0) {
+    photoCount.textContent = "";
+    return;
+  }
+
+  photoCount.textContent = `已選擇 ${count} 張照片。前 4 張會作為主要照片。`;
+});
+
 async function uploadToCloudinary(file) {
   const formData = new FormData();
+
   formData.append("file", file);
   formData.append("upload_preset", UPLOAD_PRESET);
 
@@ -157,6 +182,22 @@ async function uploadToCloudinary(file) {
   }
 
   return data.secure_url;
+}
+
+function getBikeData(images) {
+  return {
+    name: nameInput.value.trim(),
+    brand: brandInput.value.trim(),
+    type: typeInput.value,
+    year: yearInput.value.trim(),
+    km: kmInput.value.trim(),
+    price: priceInput.value.trim(),
+    cc: ccInput.value.trim(),
+    condition: conditionInput.value.trim(),
+    location: locationInput.value.trim(),
+    mods: modsInput.value.trim(),
+    images
+  };
 }
 
 function resetForm() {
@@ -179,43 +220,39 @@ function resetForm() {
   submitBtn.textContent = "新增車輛";
   cancelBtn.style.display = "none";
   editTip.style.display = "none";
-}
-
-function getBikeData(images) {
-  return {
-    name: nameInput.value.trim(),
-    brand: brandInput.value.trim(),
-    type: typeInput.value,
-    year: yearInput.value.trim(),
-    km: kmInput.value.trim(),
-    price: priceInput.value.trim(),
-    cc: ccInput.value.trim(),
-    condition: conditionInput.value.trim(),
-    location: locationInput.value.trim(),
-    mods: modsInput.value.trim(),
-    images
-  };
+  photoCount.textContent = "";
 }
 
 async function saveBike() {
-  if (!nameInput.value.trim() || !brandInput.value.trim() || !typeInput.value) {
+  const name = nameInput.value.trim();
+  const brand = brandInput.value.trim();
+  const type = typeInput.value;
+  const files = Array.from(imagesInput.files);
+
+  if (!name || !brand || !type) {
     alert("請至少填寫車名、品牌與車種。");
     return;
   }
 
+  if (!editingId && files.length === 0) {
+    alert("新增車輛時，請至少選擇一張照片。");
+    return;
+  }
+
   submitBtn.disabled = true;
-  submitBtn.textContent = "處理中...";
+  submitBtn.textContent = "照片上傳中...";
 
   try {
-    const files = Array.from(imagesInput.files);
     let imageUrls = editingBike?.images || [];
 
     if (files.length > 0) {
       imageUrls = [];
 
-      for (const file of files) {
-        const url = await uploadToCloudinary(file);
-        imageUrls.push(url);
+      for (let i = 0; i < files.length; i++) {
+        submitBtn.textContent = `正在上傳第 ${i + 1} / ${files.length} 張...`;
+
+        const imageUrl = await uploadToCloudinary(files[i]);
+        imageUrls.push(imageUrl);
       }
     }
 
@@ -269,6 +306,9 @@ function startEdit(id) {
   cancelBtn.style.display = "inline-block";
   editTip.style.display = "block";
 
+  const oldPhotoCount = bike.images?.length || 0;
+  photoCount.textContent = `目前已有 ${oldPhotoCount} 張照片。重新選擇照片會全部替換。`;
+
   window.scrollTo({
     top: 0,
     behavior: "smooth"
@@ -289,6 +329,7 @@ async function removeBike(id) {
 
     await loadBikes();
     alert("車輛已刪除。");
+
   } catch (error) {
     console.error(error);
     alert("刪除失敗，請再試一次。");
@@ -296,11 +337,11 @@ async function removeBike(id) {
 }
 
 async function loadBikes() {
-  const snap = await getDocs(collection(db, "bikes"));
+  const snapshot = await getDocs(collection(db, "bikes"));
 
-  bikes = snap.docs.map(docSnap => ({
-    id: docSnap.id,
-    ...docSnap.data()
+  bikes = snapshot.docs.map(item => ({
+    id: item.id,
+    ...item.data()
   }));
 
   if (bikes.length === 0) {
@@ -311,16 +352,18 @@ async function loadBikes() {
   bikeList.innerHTML = bikes.map(bike => `
     <div class="card">
       <img src="${bike.images?.[0] || ""}" alt="${bike.name || "車輛圖片"}">
+
       <h3>${bike.name || "未命名車輛"}</h3>
       <p>${bike.type || "未分類"}｜${bike.brand || "-"}</p>
       <p>${bike.year || "-"}｜${bike.km || "-"} km</p>
       <p>NT$${bike.price || "-"}</p>
+      <p style="font-size: 14px; color: #888;">共 ${bike.images?.length || 0} 張照片</p>
 
       <div style="
-        display:flex;
-        gap:10px;
-        justify-content:center;
-        padding:0 12px 18px;
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        padding: 0 12px 18px;
       ">
         <button class="btn edit-btn" type="button" data-id="${bike.id}">
           編輯
@@ -330,7 +373,7 @@ async function loadBikes() {
           class="btn delete-btn"
           type="button"
           data-id="${bike.id}"
-          style="background:#222; color:#fff; border-color:#222;"
+          style="background: #222; color: #fff; border-color: #222;"
         >
           刪除
         </button>
@@ -339,11 +382,15 @@ async function loadBikes() {
   `).join("");
 
   document.querySelectorAll(".edit-btn").forEach(button => {
-    button.addEventListener("click", () => startEdit(button.dataset.id));
+    button.addEventListener("click", () => {
+      startEdit(button.dataset.id);
+    });
   });
 
   document.querySelectorAll(".delete-btn").forEach(button => {
-    button.addEventListener("click", () => removeBike(button.dataset.id));
+    button.addEventListener("click", () => {
+      removeBike(button.dataset.id);
+    });
   });
 }
 
