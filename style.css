@@ -258,21 +258,40 @@ button {
   margin: auto;
 }
 
+.about-copy {
+  width: min(420px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 0;
+  text-align: left;
+}
+
 .about-highlight {
-  max-width: 920px;
-  margin: 0 auto 18px;
+  width: 100%;
+  margin: 0 0 18px;
+  padding: 0;
   color: var(--gold);
   font-size: 21px;
   font-weight: 800;
   line-height: 1.8;
+  text-align: left;
+}
+
+.about-line {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  text-align: left;
 }
 
 .about-text {
-  max-width: 820px;
-  margin: auto;
+  width: 100%;
+  margin: 0;
+  padding: 0;
   color: #444444;
   font-size: 18px;
   line-height: 2;
+  text-align: left;
 }
 
 /* 通用網格 */
@@ -647,15 +666,22 @@ a.contact-card:hover {
     padding: 44px 24px 48px;
   }
 
+  .about-copy {
+    width: calc(100% - 8px);
+    margin: 0 auto;
+  }
+
   .about-highlight {
-    max-width: 350px;
-    margin: 0 auto 20px;
+    margin: 0 0 20px;
     font-size: 17px;
-    line-height: 1.75;
+    line-height: 1.8;
+  }
+
+  .about-line {
+    white-space: nowrap;
   }
 
   .about-text {
-    max-width: 350px;
     font-size: 15px;
     line-height: 1.9;
   }
@@ -685,7 +711,6 @@ a.contact-card:hover {
     gap: 18px;
   }
 
-  /* 只讓車輛列表與精選車輛變兩欄 */
   #bikeList,
   #featuredBikes {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -773,36 +798,12 @@ a.contact-card:hover {
 }
 
 @media (max-width: 370px) {
-  /* 強制讓「誠」與「匠」兩行從同一個左邊開始 */
-.about-highlight {
-  text-align: left !important;
-}
-
-.about-highlight > div {
-  width: 100% !important;
-  display: block !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  text-align: left !important;
-  text-indent: 0 !important;
-}
-
-@media (max-width: 700px) {
-  .about-highlight {
-    text-align: left !important;
-  }
-
-  .about-highlight > div {
-    width: 100% !important;
-    display: block !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    text-align: left !important;
-    text-indent: 0 !important;
-  }
-}
   #bikeList,
   #featuredBikes {
     grid-template-columns: 1fr;
+  }
+
+  .about-highlight {
+    font-size: 16px;
   }
 }
