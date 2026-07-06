@@ -4,7 +4,63 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>誠匠二輪｜嚴選中古機車</title>
-  <link rel="stylesheet" href="style.css">
+
+  <link rel="stylesheet" href="style.css?v=20260706-5">
+
+  <style>
+    /* 關於我們：
+       整個文字欄置中在標題下方，
+       欄內的每一行都從相同左邊開始。 */
+
+    .about-section .about-copy {
+      display: block !important;
+      width: min(420px, calc(100% - 48px)) !important;
+      max-width: 420px !important;
+      margin: 0 auto !important;
+      padding: 0 !important;
+      text-align: left !important;
+    }
+
+    .about-section .about-copy .about-highlight {
+      display: block !important;
+      width: 100% !important;
+      max-width: none !important;
+      margin: 0 0 18px !important;
+      padding: 0 !important;
+      text-align: left !important;
+      text-indent: 0 !important;
+    }
+
+    .about-section .about-copy .about-line {
+      display: block !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      text-align: left !important;
+      text-indent: 0 !important;
+    }
+
+    .about-section .about-copy .about-text {
+      display: block !important;
+      width: 100% !important;
+      max-width: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      text-align: left !important;
+      text-indent: 0 !important;
+    }
+
+    @media (max-width: 700px) {
+      .about-section .about-copy {
+        width: min(320px, calc(100% - 48px)) !important;
+        max-width: 320px !important;
+      }
+
+      .about-section .about-copy .about-highlight {
+        margin-bottom: 20px !important;
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -84,16 +140,16 @@
   <p class="section-kicker">ABOUT CHENG JIANG</p>
   <h2>關於誠匠二輪</h2>
 
-  <p class="about-highlight">
-    「誠」代表誠信，讓每一筆交易都透明安心。<br>
-    「匠」代表匠心，堅持把關每一台車況。
-  </p>
+  <div class="about-copy">
+    <div class="about-highlight">
+      <div class="about-line">「誠」代表誠信，讓每一筆交易都透明安心。</div>
+      <div class="about-line">「匠」代表匠心，堅持把關每一台車況。</div>
+    </div>
 
-  <p class="about-text">
-    誠匠二輪提供透明、可靠的中古機車買賣服務。
-    從車況確認、價格評估到交車流程，都協助把關，
-    讓你能更安心地找到下一台車。
-  </p>
+    <p class="about-text">
+      誠匠二輪提供透明、可靠的中古機車買賣服務。從車況確認、價格評估到交車流程，都協助把關，讓你能更安心地找到下一台車。
+    </p>
+  </div>
 </section>
 
 <section class="section dark">
@@ -193,67 +249,67 @@
 </footer>
 
 <script>
-if (localStorage.getItem("isAdmin") === "true") {
-  document.getElementById("adminBtn").style.display = "inline-block";
-}
-
-const aboutMenu = document.querySelector(".about-menu");
-const aboutTrigger = document.querySelector(".about-trigger");
-
-aboutTrigger.addEventListener("click", () => {
-  aboutMenu.classList.toggle("is-open");
-});
-
-document.addEventListener("click", event => {
-  if (!aboutMenu.contains(event.target)) {
-    aboutMenu.classList.remove("is-open");
+  if (localStorage.getItem("isAdmin") === "true") {
+    document.getElementById("adminBtn").style.display = "inline-block";
   }
-});
+
+  const aboutMenu = document.querySelector(".about-menu");
+  const aboutTrigger = document.querySelector(".about-trigger");
+
+  aboutTrigger.addEventListener("click", () => {
+    aboutMenu.classList.toggle("is-open");
+  });
+
+  document.addEventListener("click", event => {
+    if (!aboutMenu.contains(event.target)) {
+      aboutMenu.classList.remove("is-open");
+    }
+  });
 </script>
 
 <script type="module">
-import { db } from "./firebase.js";
+  import { db } from "./firebase.js";
 
-import {
-  collection,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+  import {
+    collection,
+    getDocs
+  } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
-const featuredBikes = document.getElementById("featuredBikes");
+  const featuredBikes = document.getElementById("featuredBikes");
 
-async function loadFeaturedBikes() {
-  try {
-    const snapshot = await getDocs(collection(db, "bikes"));
+  async function loadFeaturedBikes() {
+    try {
+      const snapshot = await getDocs(collection(db, "bikes"));
 
-    const bikes = snapshot.docs
-      .map(item => ({
-        id: item.id,
-        ...item.data()
-      }))
-      .slice(0, 3);
+      const bikes = snapshot.docs
+        .map(item => ({
+          id: item.id,
+          ...item.data()
+        }))
+        .slice(0, 3);
 
-    if (bikes.length === 0) {
-      featuredBikes.innerHTML = "<p>目前尚無上架車輛。</p>";
-      return;
+      if (bikes.length === 0) {
+        featuredBikes.innerHTML = "<p>目前尚無上架車輛。</p>";
+        return;
+      }
+
+      featuredBikes.innerHTML = bikes.map(bike => `
+        <a href="bike.html?id=${bike.id}" class="card">
+          <img src="${bike.images?.[0] || ""}" alt="${bike.name || "車輛圖片"}">
+          <h3>${bike.name || "未命名車輛"}</h3>
+          <p>${bike.type || "未分類"}｜${bike.brand || "-"}</p>
+          <p>${bike.year || "-"}｜${bike.km || "-"} km</p>
+          <p>NT$${bike.price || "-"}</p>
+        </a>
+      `).join("");
+
+    } catch (error) {
+      console.error(error);
+      featuredBikes.innerHTML = "<p>車輛資料載入失敗。</p>";
     }
-
-    featuredBikes.innerHTML = bikes.map(bike => `
-      <a href="bike.html?id=${bike.id}" class="card">
-        <img src="${bike.images?.[0] || ""}" alt="${bike.name || "車輛圖片"}">
-        <h3>${bike.name || "未命名車輛"}</h3>
-        <p>${bike.type || "未分類"}｜${bike.brand || "-"}</p>
-        <p>${bike.year || "-"}｜${bike.km || "-"} km</p>
-        <p>NT$${bike.price || "-"}</p>
-      </a>
-    `).join("");
-
-  } catch (error) {
-    console.error(error);
-    featuredBikes.innerHTML = "<p>車輛資料載入失敗。</p>";
   }
-}
 
-loadFeaturedBikes();
+  loadFeaturedBikes();
 </script>
 
 </body>
