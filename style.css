@@ -253,13 +253,13 @@ button {
   max-width: 920px;
   margin: 0 auto 18px;
   color: var(--gold);
-  font-size: 22px;
+  font-size: 21px;
   font-weight: 800;
   line-height: 1.8;
 }
 
 .about-text {
-  max-width: 860px;
+  max-width: 820px;
   margin: auto;
   color: #444444;
   font-size: 18px;
@@ -311,6 +311,8 @@ button {
 
 .process-section {
   background: white;
+  padding-top: 42px;
+  padding-bottom: 42px;
 }
 
 .process-wrap {
@@ -559,14 +561,21 @@ a.contact-card:hover {
     letter-spacing: 2px;
   }
 
+  .about-section {
+    padding: 44px 24px 48px;
+  }
+
   .about-highlight {
-    font-size: 18px;
-    line-height: 1.9;
+    max-width: 350px;
+    margin: 0 auto 20px;
+    font-size: 17px;
+    line-height: 1.75;
   }
 
   .about-text {
-    font-size: 16px;
-    line-height: 1.95;
+    max-width: 350px;
+    font-size: 15px;
+    line-height: 1.9;
   }
 
   .feature-grid {
@@ -628,8 +637,8 @@ a.contact-card:hover {
   }
 
   .process-section {
-    padding-right: 0;
-    padding-left: 0;
+    padding: 24px 0;
+    overflow: hidden;
   }
 
   .process-wrap {

@@ -85,13 +85,14 @@
   <h2>關於誠匠二輪</h2>
 
   <p class="about-highlight">
-    「誠」是誠信，代表我們對每一筆交易的承諾「匠」是匠心，代表我們對每一台車況把關的堅持。
+    「誠」代表誠信，讓每一筆交易都透明安心。<br>
+    「匠」代表匠心，堅持把關每一台車況。
   </p>
 
   <p class="about-text">
-    誠匠二輪致力於提供透明、可靠且讓人安心的中古機車買賣服務。
-    從車況確認、價格評估到交車流程，都希望讓每一位來到店裡的人，
-    能夠更放心地選擇屬於自己的下一台車。
+    誠匠二輪提供透明、可靠的中古機車買賣服務。
+    從車況確認、價格評估到交車流程，都協助把關，
+    讓你能更安心地找到下一台車。
   </p>
 </section>
 
@@ -191,44 +192,23 @@
   <p>週一至週六 10:00～21:00｜每週日公休</p>
 </footer>
 
-<style>
-  .process-section {
-    background: #ffffff;
-    padding-top: 42px;
-    padding-bottom: 42px;
-  }
-
-  .process-wrap {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .process-img {
-    display: block;
-    width: 100%;
-    max-width: 1200px;
-    height: auto;
-    border-radius: 18px;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-  }
-
-  @media (max-width: 700px) {
-    .process-section {
-      padding: 24px 12px;
-    }
-
-    .process-img {
-      border-radius: 10px;
-    }
-  }
-</style>
-
 <script>
 if (localStorage.getItem("isAdmin") === "true") {
   document.getElementById("adminBtn").style.display = "inline-block";
 }
+
+const aboutMenu = document.querySelector(".about-menu");
+const aboutTrigger = document.querySelector(".about-trigger");
+
+aboutTrigger.addEventListener("click", () => {
+  aboutMenu.classList.toggle("is-open");
+});
+
+document.addEventListener("click", event => {
+  if (!aboutMenu.contains(event.target)) {
+    aboutMenu.classList.remove("is-open");
+  }
+});
 </script>
 
 <script type="module">
