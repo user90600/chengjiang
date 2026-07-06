@@ -773,6 +773,34 @@ a.contact-card:hover {
 }
 
 @media (max-width: 370px) {
+  /* 強制讓「誠」與「匠」兩行從同一個左邊開始 */
+.about-highlight {
+  text-align: left !important;
+}
+
+.about-highlight > div {
+  width: 100% !important;
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+  text-indent: 0 !important;
+}
+
+@media (max-width: 700px) {
+  .about-highlight {
+    text-align: left !important;
+  }
+
+  .about-highlight > div {
+    width: 100% !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: left !important;
+    text-indent: 0 !important;
+  }
+}
   #bikeList,
   #featuredBikes {
     grid-template-columns: 1fr;
