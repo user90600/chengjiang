@@ -4,10 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>誠匠二輪｜嚴選中古機車</title>
-  
-  <meta name="google-site-verification" content="CY_wVjcz_qb4eX5nUE_DCTDJS3RSgOW7uOOLAW74AXE" />
-
-  <link rel="stylesheet" href="style.css?v=20260706-6">
+  <meta name="google-site-verification" content="CY_wVjcz_qb4eX5nUE_DCTDJS3RSgOw7u00LAW74AXE">
+  <link rel="stylesheet" href="style.css?v=20260707-2">
 </head>
 
 <body>
@@ -22,34 +20,14 @@
     <a href="sell.html">我要賣車</a>
 
     <div class="about-menu">
-      <button class="about-trigger" type="button">
+      <button class="about-trigger" type="button" aria-expanded="false">
         關於我們 <span>⌄</span>
       </button>
 
       <div class="about-dropdown">
-        <a
-          href="https://www.instagram.com/namidamodenai?utm_source=qr"
-          target="_blank"
-          rel="noopener"
-        >
-          Instagram
-        </a>
-
-        <a
-          href="https://www.facebook.com/share/1D3ot4ddPY/?mibextid=wwXIfr"
-          target="_blank"
-          rel="noopener"
-        >
-          Facebook
-        </a>
-
-        <a
-          href="https://line.me/ti/p/~jun1127."
-          target="_blank"
-          rel="noopener"
-        >
-          LINE 聯絡我們
-        </a>
+        <a href="https://www.instagram.com/namidamodenai?utm_source=qr" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.facebook.com/share/1D3ot4ddPY/?mibextid=wwXIfr" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://line.me/ti/p/~jun1127." target="_blank" rel="noopener">LINE 聯絡我們</a>
       </div>
     </div>
 
@@ -141,15 +119,15 @@
   </div>
 </section>
 
-<section class="section">
+<section class="section featured-section">
   <p class="section-kicker">FEATURED BIKES</p>
   <h2>精選車輛</h2>
 
-  <div id="featuredBikes" class="grid">
-    <p>載入車輛中...</p>
+  <div id="featuredBikes" class="featured-grid" aria-live="polite">
+    <p class="loading-text">載入車輛中...</p>
   </div>
 
-  <div style="margin-top: 30px;">
+  <div class="featured-action">
     <a href="inventory.html" class="btn">查看全部車輛</a>
   </div>
 </section>
@@ -204,55 +182,149 @@
   const aboutTrigger = document.querySelector(".about-trigger");
 
   aboutTrigger.addEventListener("click", () => {
-    aboutMenu.classList.toggle("is-open");
+    const isOpen = aboutMenu.classList.toggle("is-open");
+    aboutTrigger.setAttribute("aria-expanded", String(isOpen));
   });
 
   document.addEventListener("click", event => {
     if (!aboutMenu.contains(event.target)) {
       aboutMenu.classList.remove("is-open");
+      aboutTrigger.setAttribute("aria-expanded", "false");
     }
   });
 </script>
 
 <script type="module">
   import { db } from "./firebase.js";
-
-  import {
-    collection,
-    getDocs
-  } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+  import { collection, getDocs } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
   const featuredBikes = document.getElementById("featuredBikes");
+
+  function escapeHTML(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function toNumber(value) {
+    const number = Number(String(value ?? "").replace(/[^\d.-]/g, ""));
+    return Number.isFinite(number) ? number : 0;
+  }
+
+  function formatNumber(value) {
+    return new Intl.NumberFormat("zh-TW").format(toNumber(value));
+  }
+
+  function formatPrice(value) {
+    const price = toNumber(value);
+    return price > 0 ? `NT$${formatNumber(price)}` : "價格洽詢";
+  }
+
+  function imageMarkup(bike) {
+    const image = Array.isArray(bike.images) ? bike.images[0] : "";
+
+    if (!image) {
+      return `<div class="card-image-placeholder">暫無圖片</div>`;
+    }
+
+    return `<img src="${escapeHTML(image)}" alt="${escapeHTML(bike.name || "車輛圖片")}" loading="lazy">`;
+  }
+
+  function bikeCard(bike) {
+    const name = bike.name || "未命名車輛";
+    const type = bike.type || "未分類";
+    const brand = bike.brand || "-";
+    const year = bike.year || "-";
+    const km = bike.km === 0 || bike.km ? `${formatNumber(bike.km)} km` : "-";
+
+    return `
+      <a href="bike.html?id=${encodeURIComponent(bike.id)}" class="card featured-card">
+        ${imageMarkup(bike)}
+        <h3>${escapeHTML(name)}</h3>
+        <p>${escapeHTML(type)}｜${escapeHTML(brand)}</p>
+        <p>${escapeHTML(year)}｜${escapeHTML(km)}</p>
+        <p>${formatPrice(bike.price)}</p>
+      </a>
+    `;
+  }
+
+  function isFeatured(bike) {
+    return bike.featured === true || String(bike.featured).toLowerCase() === "true";
+  }
+
+  function shuffle(list) {
+    const copy = [...list];
+
+    for (let index = copy.length - 1; index > 0; index -= 1) {
+      const randomIndex = Math.floor(Math.random() * (index + 1));
+      [copy[index], copy[randomIndex]] = [copy[randomIndex], copy[index]];
+    }
+
+    return copy;
+  }
+
+  function renderMarquee(bikes) {
+    const randomBikes = shuffle(bikes);
+    const duration = Math.max(28, randomBikes.length * 7);
+    const cards = randomBikes.map(bikeCard).join("");
+
+    featuredBikes.className = "featured-marquee";
+    featuredBikes.innerHTML = `
+      <div class="marquee-viewport" aria-label="隨機車輛跑馬燈">
+        <div class="marquee-track" style="--marquee-duration: ${duration}s;">
+          <div class="marquee-group">${cards}</div>
+          <div class="marquee-group" aria-hidden="true">${cards}</div>
+        </div>
+      </div>
+      <p class="marquee-note">目前沒有指定精選車輛，現有車輛正在隨機輪播。</p>
+    `;
+
+    const viewport = featuredBikes.querySelector(".marquee-viewport");
+    const track = featuredBikes.querySelector(".marquee-track");
+
+    const pause = () => track.classList.add("is-paused");
+    const resume = () => track.classList.remove("is-paused");
+
+    viewport.addEventListener("pointerdown", pause);
+    viewport.addEventListener("pointerup", resume);
+    viewport.addEventListener("pointercancel", resume);
+    viewport.addEventListener("pointerleave", resume);
+  }
+
+  function renderFeatured(bikes) {
+    const selectedBikes = bikes.filter(isFeatured);
+
+    if (selectedBikes.length > 0) {
+      featuredBikes.className = "featured-grid";
+      featuredBikes.innerHTML = selectedBikes.map(bikeCard).join("");
+      return;
+    }
+
+    renderMarquee(bikes);
+  }
 
   async function loadFeaturedBikes() {
     try {
       const snapshot = await getDocs(collection(db, "bikes"));
-
-      const bikes = snapshot.docs
-        .map(item => ({
-          id: item.id,
-          ...item.data()
-        }))
-        .slice(0, 3);
+      const bikes = snapshot.docs.map(item => ({
+        id: item.id,
+        ...item.data()
+      }));
 
       if (bikes.length === 0) {
-        featuredBikes.innerHTML = "<p>目前尚無上架車輛。</p>";
+        featuredBikes.className = "featured-grid";
+        featuredBikes.innerHTML = "<p class='loading-text'>目前尚無上架車輛。</p>";
         return;
       }
 
-      featuredBikes.innerHTML = bikes.map(bike => `
-        <a href="bike.html?id=${bike.id}" class="card">
-          <img src="${bike.images?.[0] || ""}" alt="${bike.name || "車輛圖片"}">
-          <h3>${bike.name || "未命名車輛"}</h3>
-          <p>${bike.type || "未分類"}｜${bike.brand || "-"}</p>
-          <p>${bike.year || "-"}｜${bike.km || "-"} km</p>
-          <p>NT$${bike.price || "-"}</p>
-        </a>
-      `).join("");
-
+      renderFeatured(bikes);
     } catch (error) {
       console.error(error);
-      featuredBikes.innerHTML = "<p>車輛資料載入失敗。</p>";
+      featuredBikes.className = "featured-grid";
+      featuredBikes.innerHTML = "<p class='loading-text'>車輛資料載入失敗，請稍後再試。</p>";
     }
   }
 
