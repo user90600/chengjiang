@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>後台管理｜誠匠二輪</title>
-  <link rel="stylesheet" href="style.css?v=20260707-2">
+  <link rel="stylesheet" href="style.css?v=20260707-4">
 </head>
 
 <body class="admin-body">
@@ -27,11 +27,16 @@
 
     <label class="admin-input-wrap">
       <span>管理密碼</span>
-      <input id="adminPassword" type="password" placeholder="輸入密碼" autocomplete="current-password">
+      <input
+        id="adminPassword"
+        type="password"
+        placeholder="輸入密碼"
+        autocomplete="current-password"
+      >
     </label>
 
     <button id="loginBtn" class="btn" type="button">登入後台</button>
-    <p id="loginMessage" class="form-message" aria-live="polite"></p>
+    <p id="loginMessage" class="form-message"></p>
   </section>
 
   <section id="adminPanel" hidden>
@@ -39,7 +44,10 @@
       <div>
         <p class="section-kicker">DASHBOARD</p>
         <h1>車輛管理後台</h1>
-        <p>可新增、編輯、刪除車輛；勾選「首頁精選」後，首頁會固定顯示該車。沒有勾選任何車時，首頁會自動隨機跑馬燈輪播。</p>
+        <p>
+          可新增、編輯、刪除車輛；勾選首頁精選後，首頁會固定顯示該車。
+          若沒有任何車被設為精選，首頁會自動隨機跑馬燈輪播。
+        </p>
       </div>
 
       <button id="logoutBtn" class="btn btn-outline" type="button">登出</button>
@@ -52,52 +60,55 @@
           <h2 id="formTitle">新增車輛</h2>
         </div>
 
-        <button id="cancelEditBtn" class="text-button" type="button" hidden>取消編輯</button>
+        <button id="cancelEditBtn" class="text-button" type="button" hidden>
+          取消編輯
+        </button>
       </div>
 
       <form id="bikeForm">
         <div class="admin-form-grid">
           <label class="admin-input-wrap">
             <span>車名</span>
-            <input id="bikeName" name="name" type="text" placeholder="例如：Yamaha R15 V3" required>
+            <input id="bikeName" type="text" placeholder="例如：Yamaha R15 V3" required>
           </label>
 
           <label class="admin-input-wrap">
             <span>品牌</span>
-            <input id="bikeBrand" name="brand" type="text" placeholder="例如：Yamaha" required>
+            <input id="bikeBrand" type="text" placeholder="例如：Yamaha" required>
           </label>
 
           <label class="admin-input-wrap">
             <span>車種</span>
-            <input id="bikeType" name="type" type="text" placeholder="例如：仿賽、街車、速克達" required>
+            <input id="bikeType" type="text" placeholder="例如：輕檔車、速克達、重機" required>
           </label>
 
           <label class="admin-input-wrap">
             <span>年份</span>
-            <input id="bikeYear" name="year" type="number" min="1900" max="2100" inputmode="numeric" placeholder="例如：2020" required>
+            <input id="bikeYear" type="number" placeholder="例如：2020" required>
           </label>
 
           <label class="admin-input-wrap">
             <span>里程</span>
-            <input id="bikeKm" name="km" type="number" min="0" inputmode="numeric" placeholder="例如：15000" required>
+            <input id="bikeKm" type="number" placeholder="例如：15000" required>
           </label>
 
           <label class="admin-input-wrap">
             <span>售價</span>
-            <input id="bikePrice" name="price" type="number" min="0" inputmode="numeric" placeholder="例如：85000" required>
+            <input id="bikePrice" type="number" placeholder="例如：85000" required>
           </label>
 
           <label class="admin-input-wrap admin-input-wide">
             <span>車輛照片</span>
-            <input id="bikeImages" name="images" type="file" accept="image/*" multiple>
-            <small>一次可選最多 4 張。新增時會上傳照片；編輯時若重新選照片，會取代原本照片。</small>
+            <input id="bikeImages" type="file" accept="image/*" multiple>
+            <small>一次最多選擇 4 張。編輯時重新選照片會取代原本照片。</small>
           </label>
 
           <label class="featured-checkbox">
-            <input id="bikeFeatured" name="featured" type="checkbox">
+            <input id="bikeFeatured" type="checkbox">
+
             <span>
               <strong>設為首頁精選車輛</strong>
-              <small>勾選後，首頁只會固定顯示所有已勾選的車輛；全部取消勾選時，首頁會切換成隨機跑馬燈。</small>
+              <small>勾選後首頁會固定顯示這台車；全部取消後首頁才會跑馬燈輪播。</small>
             </span>
           </label>
         </div>
@@ -106,7 +117,7 @@
 
         <div class="admin-form-actions">
           <button id="saveBikeBtn" class="btn" type="submit">新增車輛</button>
-          <p id="bikeFormMessage" class="form-message" aria-live="polite"></p>
+          <p id="bikeFormMessage" class="form-message"></p>
         </div>
       </form>
     </section>
@@ -118,8 +129,20 @@
           <h2>已上架車輛</h2>
         </div>
 
-        <button id="refreshBikesBtn" class="text-button" type="button">重新整理</button>
+        <button id="refreshBikesBtn" class="text-button" type="button">
+          重新整理
+        </button>
       </div>
+
+      <input
+        id="adminBikeSearch"
+        class="admin-bike-search"
+        type="search"
+        placeholder="搜尋車名、品牌、車種、年份、價格、里程"
+        autocomplete="off"
+      >
+
+      <p id="adminBikeCount" class="admin-bike-count">載入車輛中...</p>
 
       <div id="adminBikeList" class="admin-bike-list">
         <p class="loading-text">載入車輛中...</p>
@@ -133,7 +156,9 @@
           <h2>賣車詢問</h2>
         </div>
 
-        <button id="refreshRequestsBtn" class="text-button" type="button">重新整理</button>
+        <button id="refreshRequestsBtn" class="text-button" type="button">
+          重新整理
+        </button>
       </div>
 
       <div id="sellRequestList" class="sell-request-list">
@@ -157,6 +182,7 @@
   } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
   const ADMIN_PASSWORD = "chengjiang123";
+
   const CLOUD_NAME = "bjw5m0af";
   const UPLOAD_PRESET = "tnfxxoqb";
 
@@ -176,14 +202,18 @@
   const bikePrice = document.getElementById("bikePrice");
   const bikeImages = document.getElementById("bikeImages");
   const bikeFeatured = document.getElementById("bikeFeatured");
-  const currentImages = document.getElementById("currentImages");
+
   const formTitle = document.getElementById("formTitle");
   const saveBikeBtn = document.getElementById("saveBikeBtn");
   const cancelEditBtn = document.getElementById("cancelEditBtn");
   const bikeFormMessage = document.getElementById("bikeFormMessage");
+  const currentImages = document.getElementById("currentImages");
 
+  const adminBikeSearch = document.getElementById("adminBikeSearch");
+  const adminBikeCount = document.getElementById("adminBikeCount");
   const adminBikeList = document.getElementById("adminBikeList");
   const sellRequestList = document.getElementById("sellRequestList");
+
   const refreshBikesBtn = document.getElementById("refreshBikesBtn");
   const refreshRequestsBtn = document.getElementById("refreshRequestsBtn");
 
@@ -217,18 +247,21 @@
     return bike.featured === true || String(bike.featured).toLowerCase() === "true";
   }
 
-  function bikeImageMarkup(bike) {
-    const image = Array.isArray(bike.images) ? bike.images[0] : "";
+  function getBrand(bike) {
+    return bike.brand || bike.bikeBrand || bike.manufacturer || "";
+  }
 
-    return image
-      ? `<img src="${escapeHTML(image)}" alt="${escapeHTML(bike.name || "車輛圖片")}" loading="lazy">`
-      : `<div class="admin-bike-placeholder">暫無圖片</div>`;
+  function getType(bike) {
+    return bike.type || bike.bikeType || bike.category || "";
+  }
+
+  function getImage(bike) {
+    return Array.isArray(bike.images) ? bike.images[0] || "" : "";
   }
 
   function timestampValue(value) {
     if (value?.toMillis) return value.toMillis();
     if (value?.toDate) return value.toDate().getTime();
-    if (typeof value === "string") return Date.parse(value) || 0;
     return 0;
   }
 
@@ -245,11 +278,13 @@
 
   function setSaving(isSaving) {
     saveBikeBtn.disabled = isSaving;
-    saveBikeBtn.textContent = isSaving
-      ? "處理中..."
-      : editingBike
-        ? "儲存修改"
-        : "新增車輛";
+
+    if (isSaving) {
+      saveBikeBtn.textContent = "處理中...";
+      return;
+    }
+
+    saveBikeBtn.textContent = editingBike ? "儲存修改" : "新增車輛";
   }
 
   function setLoggedIn(isLoggedIn) {
@@ -271,10 +306,14 @@
     }
 
     currentImages.hidden = false;
+
     currentImages.innerHTML = `
       <p>目前照片</p>
+
       <div class="current-image-grid">
-        ${images.map(url => `<img src="${escapeHTML(url)}" alt="目前車輛照片">`).join("")}
+        ${images.map(url => `
+          <img src="${escapeHTML(url)}" alt="車輛照片">
+        `).join("")}
       </div>
     `;
   }
@@ -282,8 +321,10 @@
   function resetBikeForm() {
     editingBike = null;
     bikeForm.reset();
+
     formTitle.textContent = "新增車輛";
     cancelEditBtn.hidden = true;
+
     renderCurrentImages([]);
     showMessage(bikeFormMessage, "");
     setSaving(false);
@@ -291,9 +332,10 @@
 
   function startEdit(bike) {
     editingBike = bike;
+
     bikeName.value = bike.name || "";
-    bikeBrand.value = bike.brand || "";
-    bikeType.value = bike.type || "";
+    bikeBrand.value = getBrand(bike);
+    bikeType.value = getType(bike);
     bikeYear.value = bike.year || "";
     bikeKm.value = toNumber(bike.km);
     bikePrice.value = toNumber(bike.price);
@@ -301,7 +343,9 @@
 
     formTitle.textContent = `編輯車輛：${bike.name || "未命名車輛"}`;
     cancelEditBtn.hidden = false;
+
     renderCurrentImages(Array.isArray(bike.images) ? bike.images : []);
+
     showMessage(bikeFormMessage, "");
     setSaving(false);
 
@@ -311,43 +355,90 @@
     });
   }
 
+  function getFilteredAdminBikes() {
+    const keyword = adminBikeSearch.value.trim().toLowerCase();
+
+    if (!keyword) {
+      return sortByCreatedAt(bikes);
+    }
+
+    return sortByCreatedAt(bikes).filter(bike => {
+      const searchableText = [
+        bike.name,
+        getBrand(bike),
+        getType(bike),
+        bike.year,
+        bike.km,
+        bike.price
+      ].join(" ").toLowerCase();
+
+      return searchableText.includes(keyword);
+    });
+  }
+
   function renderBikeList() {
-    if (bikes.length === 0) {
-      adminBikeList.innerHTML = "<p class='loading-text'>目前尚無上架車輛。</p>";
+    const filteredBikes = getFilteredAdminBikes();
+
+    adminBikeCount.textContent = `顯示 ${filteredBikes.length} / ${bikes.length} 台車輛`;
+
+    if (filteredBikes.length === 0) {
+      adminBikeList.innerHTML = `
+        <p class="loading-text">
+          找不到符合搜尋條件的車輛。
+        </p>
+      `;
       return;
     }
 
-    adminBikeList.innerHTML = sortByCreatedAt(bikes).map(bike => `
-      <article class="admin-bike-item">
-        <div class="admin-bike-image">
-          ${bikeImageMarkup(bike)}
-        </div>
+    adminBikeList.innerHTML = filteredBikes.map(bike => {
+      const image = getImage(bike);
 
-        <div class="admin-bike-content">
-          <div class="admin-bike-title-row">
-            <div>
-              <p class="admin-badge ${isFeatured(bike) ? "is-featured" : ""}">
-                ${isFeatured(bike) ? "首頁精選" : "一般上架"}
-              </p>
-              <h3>${escapeHTML(bike.name || "未命名車輛")}</h3>
+      return `
+        <article class="admin-bike-item">
+          <div class="admin-bike-image">
+            ${
+              image
+                ? `<img src="${escapeHTML(image)}" alt="${escapeHTML(bike.name || "車輛圖片")}">`
+                : `<div class="admin-bike-placeholder">暫無圖片</div>`
+            }
+          </div>
+
+          <div class="admin-bike-content">
+            <div class="admin-bike-title-row">
+              <div>
+                <p class="admin-badge ${isFeatured(bike) ? "is-featured" : ""}">
+                  ${isFeatured(bike) ? "首頁精選" : "一般上架"}
+                </p>
+
+                <h3>${escapeHTML(bike.name || "未命名車輛")}</h3>
+              </div>
+
+              <label class="mini-featured-toggle">
+                <input
+                  type="checkbox"
+                  data-featured-id="${escapeHTML(bike.id)}"
+                  ${isFeatured(bike) ? "checked" : ""}
+                >
+                <span>首頁精選</span>
+              </label>
             </div>
 
-            <label class="mini-featured-toggle">
-              <input type="checkbox" data-featured-id="${escapeHTML(bike.id)}" ${isFeatured(bike) ? "checked" : ""}>
-              <span>首頁精選</span>
-            </label>
-          </div>
+            <p>${escapeHTML(getType(bike) || "未分類")}｜${escapeHTML(getBrand(bike) || "-")}</p>
+            <p>${escapeHTML(bike.year || "-")}｜${formatNumber(bike.km)} km｜${formatPrice(bike.price)}</p>
 
-          <p>${escapeHTML(bike.type || "未分類")}｜${escapeHTML(bike.brand || "-")}</p>
-          <p>${escapeHTML(bike.year || "-")}｜${formatNumber(bike.km)} km｜${formatPrice(bike.price)}</p>
+            <div class="admin-bike-actions">
+              <button class="text-button" type="button" data-action="edit" data-id="${escapeHTML(bike.id)}">
+                編輯
+              </button>
 
-          <div class="admin-bike-actions">
-            <button class="text-button" type="button" data-action="edit" data-id="${escapeHTML(bike.id)}">編輯</button>
-            <button class="text-button danger" type="button" data-action="delete" data-id="${escapeHTML(bike.id)}">刪除</button>
+              <button class="text-button danger" type="button" data-action="delete" data-id="${escapeHTML(bike.id)}">
+                刪除
+              </button>
+            </div>
           </div>
-        </div>
-      </article>
-    `).join("");
+        </article>
+      `;
+    }).join("");
   }
 
   function requestValue(data, keys) {
@@ -375,7 +466,7 @@
   }
 
   function renderSellRequests(requests) {
-    if (requests.length === 0) {
+    if (!requests.length) {
       sellRequestList.innerHTML = "<p class='loading-text'>目前尚無賣車詢問。</p>";
       return;
     }
@@ -397,11 +488,17 @@
             <h3>${escapeHTML(name)}</h3>
             <span>${escapeHTML(createdAt)}</span>
           </div>
+
           <p><strong>電話：</strong>${escapeHTML(phone)}</p>
-          <p><strong>車輛：</strong>${escapeHTML([brand, bikeNameValue].filter(Boolean).join(" ") || "未填")}</p>
+          <p><strong>車輛：</strong>${escapeHTML([brand, bikeNameValue].filter(Boolean).join(" "))}</p>
           <p><strong>年份／里程：</strong>${escapeHTML(year || "-")}／${km === "" ? "-" : `${formatNumber(km)} km`}</p>
           <p><strong>預計售價：</strong>${price === "" ? "-" : formatPrice(price)}</p>
-          ${message ? `<p class="sell-request-message"><strong>備註：</strong>${escapeHTML(message)}</p>` : ""}
+
+          ${
+            message
+              ? `<p class="sell-request-message"><strong>備註：</strong>${escapeHTML(message)}</p>`
+              : ""
+          }
         </article>
       `;
     }).join("");
@@ -425,6 +522,7 @@
     }
 
     const result = await response.json();
+
     return result.secure_url;
   }
 
@@ -434,6 +532,7 @@
 
   async function loadBikes() {
     adminBikeList.innerHTML = "<p class='loading-text'>載入車輛中...</p>";
+    adminBikeCount.textContent = "載入車輛中...";
 
     try {
       const snapshot = await getDocs(collection(db, "bikes"));
@@ -446,6 +545,8 @@
       renderBikeList();
     } catch (error) {
       console.error(error);
+
+      adminBikeCount.textContent = "車輛資料載入失敗";
       adminBikeList.innerHTML = "<p class='loading-text'>車輛資料載入失敗。</p>";
     }
   }
@@ -523,12 +624,14 @@
         }
 
         await updateDoc(doc(db, "bikes", editingBike.id), payload);
+
         showMessage(bikeFormMessage, "車輛資料已儲存。", "success");
       } else {
         payload.images = files.length > 0 ? await uploadImages(files) : [];
         payload.createdAt = serverTimestamp();
 
         await addDoc(collection(db, "bikes"), payload);
+
         showMessage(bikeFormMessage, "車輛已新增。", "success");
       }
 
@@ -545,6 +648,15 @@
   });
 
   cancelEditBtn.addEventListener("click", resetBikeForm);
+
+  adminBikeSearch.addEventListener("input", renderBikeList);
+
+  refreshBikesBtn.addEventListener("click", () => {
+    adminBikeSearch.value = "";
+    loadBikes();
+  });
+
+  refreshRequestsBtn.addEventListener("click", loadSellRequests);
 
   adminBikeList.addEventListener("click", async event => {
     const button = event.target.closest("button[data-action]");
@@ -594,13 +706,10 @@
       await loadBikes();
     } catch (error) {
       console.error(error);
-      window.alert("更新精選設定失敗，請再試一次。");
+      window.alert("更新首頁精選設定失敗，請再試一次。");
       await loadBikes();
     }
   });
-
-  refreshBikesBtn.addEventListener("click", loadBikes);
-  refreshRequestsBtn.addEventListener("click", loadSellRequests);
 
   if (localStorage.getItem("isAdmin") === "true") {
     openAdmin();
