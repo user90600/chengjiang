@@ -4,158 +4,347 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>車輛列表｜誠匠二輪</title>
-  <link rel="stylesheet" href="style.css">
+
+  <link rel="stylesheet" href="style.css?v=20260707-3">
 </head>
 
 <body>
 
 <header class="navbar">
-  <div class="logo">誠匠二輪</div>
+  <a class="logo" href="index.html">誠匠二輪</a>
+
   <nav>
     <a href="index.html">首頁</a>
     <a href="inventory.html">車輛列表</a>
+    <a href="index.html#process">交易流程</a>
     <a href="sell.html">我要賣車</a>
-    <a href="admin.html" id="adminBtn" style="display:none;">後台</a>
+
+    <div class="about-menu">
+      <button class="about-trigger" type="button" aria-expanded="false">
+        關於我們 <span>⌄</span>
+      </button>
+
+      <div class="about-dropdown">
+        <a href="https://www.instagram.com/namidamodenai?utm_source=qr" target="_blank" rel="noopener">
+          Instagram
+        </a>
+        <a href="https://www.facebook.com/share/1D3ot4ddPY/?mibextid=wwXIfr" target="_blank" rel="noopener">
+          Facebook
+        </a>
+        <a href="https://line.me/ti/p/~jun1127." target="_blank" rel="noopener">
+          LINE 聯絡我們
+        </a>
+      </div>
+    </div>
+
+    <a href="admin.html" id="adminBtn" style="display: none;">後台</a>
   </nav>
 </header>
 
-<section class="section">
-  <h2>車輛列表</h2>
+<main>
+  <section class="section inventory-section">
+    <p class="section-kicker">CURRENT INVENTORY</p>
+    <h2>車輛列表</h2>
 
-  <div style="
-    max-width:1200px;
-    margin:auto;
-    display:flex;
-    flex-wrap:wrap;
-    justify-content:center;
-    gap:10px;
-  ">
-    <select id="typeFilter" class="search-box">
-      <option value="all">全部車種</option>
-      <option value="速克達">速克達</option>
-      <option value="輕檔車">輕檔車</option>
-      <option value="大型重機">大型重機</option>
-      <option value="電動車">電動車</option>
-    </select>
+    <div class="inventory-toolbar">
+      <select id="typeFilter" class="sort-select">
+        <option value="all">全部車種</option>
+        <option value="速克達">速克達</option>
+        <option value="輕檔車">輕檔車</option>
+        <option value="大型重機">大型重機</option>
+        <option value="電動車">電動車</option>
+      </select>
 
-    <select id="brandFilter" class="search-box">
-      <option value="all">全部品牌</option>
-    </select>
+      <select id="brandFilter" class="sort-select">
+        <option value="all">全部品牌</option>
+      </select>
 
-    <input
-      id="searchInput"
-      class="search-box"
-      placeholder="搜尋車款、品牌、年份"
-    >
-  </div>
+      <input
+        id="searchInput"
+        class="search-box"
+        type="search"
+        placeholder="搜尋車款、品牌、年份"
+        autocomplete="off"
+      >
 
-  <div id="bikeList" class="grid"></div>
-</section>
+      <select id="sortSelect" class="sort-select">
+        <option value="default">排序方式</option>
+        <option value="price-asc">價格：低到高</option>
+        <option value="price-desc">價格：高到低</option>
+        <option value="km-asc">里程：低到高</option>
+        <option value="km-desc">里程：高到低</option>
+        <option value="year-desc">年份：新到舊</option>
+        <option value="year-asc">年份：舊到新</option>
+      </select>
+    </div>
+
+    <p id="bikeCount" class="bike-count">載入車輛中...</p>
+
+    <div id="bikeList" class="grid">
+      <p class="loading-text">載入車輛中...</p>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <p>誠匠二輪｜嚴選中古機車</p>
+  <p>週一至週六 10:00～21:00｜每週日公休</p>
+</footer>
 
 <script>
-if (localStorage.getItem("isAdmin") === "true") {
-  document.getElementById("adminBtn").style.display = "inline-block";
-}
+  if (localStorage.getItem("isAdmin") === "true") {
+    document.getElementById("adminBtn").style.display = "inline-block";
+  }
+
+  const aboutMenu = document.querySelector(".about-menu");
+  const aboutTrigger = document.querySelector(".about-trigger");
+
+  aboutTrigger.addEventListener("click", () => {
+    const isOpen = aboutMenu.classList.toggle("is-open");
+    aboutTrigger.setAttribute("aria-expanded", String(isOpen));
+  });
+
+  document.addEventListener("click", event => {
+    if (!aboutMenu.contains(event.target)) {
+      aboutMenu.classList.remove("is-open");
+      aboutTrigger.setAttribute("aria-expanded", "false");
+    }
+  });
 </script>
 
 <script type="module">
-import { db, collection, getDocs } from "./firebase.js";
+  import { db, collection, getDocs } from "./firebase.js";
 
-const bikeList = document.getElementById("bikeList");
-const typeFilter = document.getElementById("typeFilter");
-const brandFilter = document.getElementById("brandFilter");
-const searchInput = document.getElementById("searchInput");
+  const bikeList = document.getElementById("bikeList");
+  const bikeCount = document.getElementById("bikeCount");
+  const typeFilter = document.getElementById("typeFilter");
+  const brandFilter = document.getElementById("brandFilter");
+  const searchInput = document.getElementById("searchInput");
+  const sortSelect = document.getElementById("sortSelect");
 
-let bikes = [];
+  let bikes = [];
 
-function updateBrandOptions(sourceBikes) {
-  const currentBrand = brandFilter.value;
+  function escapeHTML(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
 
-  const brands = [...new Set(
-    sourceBikes
-      .map(bike => (bike.brand || "").trim())
-      .filter(Boolean)
-  )].sort((a, b) => a.localeCompare(b));
+  function toNumber(value) {
+    const number = Number(String(value ?? "").replace(/[^\d.-]/g, ""));
+    return Number.isFinite(number) ? number : 0;
+  }
 
-  brandFilter.innerHTML = `<option value="all">全部品牌</option>`;
+  function formatNumber(value) {
+    return new Intl.NumberFormat("zh-TW").format(toNumber(value));
+  }
 
-  brands.forEach(brand => {
-    brandFilter.innerHTML += `
-      <option value="${brand}">${brand}</option>
+  function getBrand(bike) {
+    return bike.brand || bike.bikeBrand || bike.manufacturer || "";
+  }
+
+  function getType(bike) {
+    return bike.type || bike.bikeType || bike.category || "";
+  }
+
+  function formatPrice(value) {
+    const price = toNumber(value);
+    return price > 0 ? `NT$${formatNumber(price)}` : "價格洽詢";
+  }
+
+  function getImage(bike) {
+    return Array.isArray(bike.images) ? bike.images[0] || "" : "";
+  }
+
+  function updateTypeOptions() {
+    const currentType = typeFilter.value;
+
+    const defaultTypes = ["速克達", "輕檔車", "大型重機", "電動車"];
+
+    const extraTypes = [...new Set(
+      bikes
+        .map(getType)
+        .filter(Boolean)
+        .filter(type => !defaultTypes.includes(type))
+    )].sort((a, b) => a.localeCompare(b, "zh-Hant"));
+
+    typeFilter.innerHTML = `
+      <option value="all">全部車種</option>
+      ${defaultTypes.map(type => `
+        <option value="${escapeHTML(type)}">${escapeHTML(type)}</option>
+      `).join("")}
+      ${extraTypes.map(type => `
+        <option value="${escapeHTML(type)}">${escapeHTML(type)}</option>
+      `).join("")}
     `;
-  });
 
-  if (brands.includes(currentBrand)) {
-    brandFilter.value = currentBrand;
-  }
-}
-
-function render(list) {
-  if (list.length === 0) {
-    bikeList.innerHTML = "<p style='text-align:center;'>目前沒有符合條件的車輛。</p>";
-    return;
+    if ([...typeFilter.options].some(option => option.value === currentType)) {
+      typeFilter.value = currentType;
+    }
   }
 
-  bikeList.innerHTML = list.map(bike => `
-    <a href="bike.html?id=${bike.id}" class="card">
-      <img src="${bike.images?.[0] || ""}" alt="${bike.name || "車輛圖片"}">
-      <h3>${bike.name || "未命名車輛"}</h3>
-      <p>${bike.type || "未分類"}｜${bike.brand || "-"}</p>
-      <p>${bike.year || "-"}｜${bike.km || "-"} km</p>
-      <p>NT$${bike.price || "-"}</p>
-    </a>
-  `).join("");
-}
+  function updateBrandOptions(sourceBikes) {
+    const currentBrand = brandFilter.value;
 
-function applyFilters() {
-  const typeValue = typeFilter.value;
-  const brandValue = brandFilter.value;
-  const keyword = searchInput.value.trim().toLowerCase();
+    const brands = [...new Set(
+      sourceBikes
+        .map(getBrand)
+        .map(brand => brand.trim())
+        .filter(Boolean)
+    )].sort((a, b) => a.localeCompare(b, "zh-Hant"));
 
-  const typeBikes = bikes.filter(bike => {
-    return typeValue === "all" || bike.type === typeValue;
+    brandFilter.innerHTML = `
+      <option value="all">全部品牌</option>
+      ${brands.map(brand => `
+        <option value="${escapeHTML(brand)}">${escapeHTML(brand)}</option>
+      `).join("")}
+    `;
+
+    if (brands.includes(currentBrand)) {
+      brandFilter.value = currentBrand;
+    } else {
+      brandFilter.value = "all";
+    }
+  }
+
+  function renderBikeCard(bike) {
+    const image = getImage(bike);
+    const name = bike.name || "未命名車輛";
+    const brand = getBrand(bike) || "-";
+    const type = getType(bike) || "未分類";
+    const year = bike.year || "-";
+    const km = bike.km === "" || bike.km === undefined || bike.km === null
+      ? "-"
+      : `${formatNumber(bike.km)} km`;
+
+    return `
+      <a href="bike.html?id=${encodeURIComponent(bike.id)}" class="card">
+        ${
+          image
+            ? `<img src="${escapeHTML(image)}" alt="${escapeHTML(name)}" loading="lazy">`
+            : `<div class="card-image-placeholder">暫無圖片</div>`
+        }
+        <h3>${escapeHTML(name)}</h3>
+        <p>${escapeHTML(type)}｜${escapeHTML(brand)}</p>
+        <p>${escapeHTML(year)}｜${escapeHTML(km)}</p>
+        <p>${formatPrice(bike.price)}</p>
+      </a>
+    `;
+  }
+
+  function sortBikes(list) {
+    const sorted = [...list];
+
+    if (sortSelect.value === "price-asc") {
+      sorted.sort((a, b) => toNumber(a.price) - toNumber(b.price));
+    }
+
+    if (sortSelect.value === "price-desc") {
+      sorted.sort((a, b) => toNumber(b.price) - toNumber(a.price));
+    }
+
+    if (sortSelect.value === "km-asc") {
+      sorted.sort((a, b) => toNumber(a.km) - toNumber(b.km));
+    }
+
+    if (sortSelect.value === "km-desc") {
+      sorted.sort((a, b) => toNumber(b.km) - toNumber(a.km));
+    }
+
+    if (sortSelect.value === "year-desc") {
+      sorted.sort((a, b) => toNumber(b.year) - toNumber(a.year));
+    }
+
+    if (sortSelect.value === "year-asc") {
+      sorted.sort((a, b) => toNumber(a.year) - toNumber(b.year));
+    }
+
+    return sorted;
+  }
+
+  function applyFilters() {
+    const selectedType = typeFilter.value;
+    const keyword = searchInput.value.trim().toLowerCase();
+
+    const typeBikes = bikes.filter(bike => {
+      return selectedType === "all" || getType(bike) === selectedType;
+    });
+
+    updateBrandOptions(typeBikes);
+
+    const selectedBrand = brandFilter.value;
+
+    const filteredBikes = typeBikes.filter(bike => {
+      const brand = getBrand(bike);
+      const type = getType(bike);
+
+      const matchBrand =
+        selectedBrand === "all" || brand === selectedBrand;
+
+      const searchableText = [
+        bike.name,
+        brand,
+        type,
+        bike.year
+      ].join(" ").toLowerCase();
+
+      return matchBrand && searchableText.includes(keyword);
+    });
+
+    const sortedBikes = sortBikes(filteredBikes);
+
+    bikeCount.textContent = `共 ${sortedBikes.length} 台車輛`;
+
+    if (sortedBikes.length === 0) {
+      bikeList.innerHTML = `
+        <p class="loading-text">
+          目前沒有符合條件的車輛。
+        </p>
+      `;
+      return;
+    }
+
+    bikeList.innerHTML = sortedBikes.map(renderBikeCard).join("");
+  }
+
+  async function loadBikes() {
+    try {
+      const snapshot = await getDocs(collection(db, "bikes"));
+
+      bikes = snapshot.docs.map(item => ({
+        id: item.id,
+        ...item.data()
+      }));
+
+      updateTypeOptions();
+      updateBrandOptions(bikes);
+      applyFilters();
+    } catch (error) {
+      console.error(error);
+
+      bikeCount.textContent = "車輛資料載入失敗";
+
+      bikeList.innerHTML = `
+        <p class="loading-text">
+          車輛資料載入失敗，請稍後再試。
+        </p>
+      `;
+    }
+  }
+
+  typeFilter.addEventListener("change", () => {
+    brandFilter.value = "all";
+    applyFilters();
   });
 
-  updateBrandOptions(typeBikes);
+  brandFilter.addEventListener("change", applyFilters);
+  searchInput.addEventListener("input", applyFilters);
+  sortSelect.addEventListener("change", applyFilters);
 
-  const filtered = typeBikes.filter(bike => {
-    const matchBrand =
-      brandValue === "all" || bike.brand === brandValue;
-
-    const searchableText = [
-      bike.name,
-      bike.brand,
-      bike.type,
-      bike.year
-    ].join(" ").toLowerCase();
-
-    return matchBrand && searchableText.includes(keyword);
-  });
-
-  render(filtered);
-}
-
-async function loadBikes() {
-  const snap = await getDocs(collection(db, "bikes"));
-
-  bikes = snap.docs.map(docSnap => ({
-    id: docSnap.id,
-    ...docSnap.data()
-  }));
-
-  updateBrandOptions(bikes);
-  render(bikes);
-}
-
-typeFilter.addEventListener("change", () => {
-  brandFilter.value = "all";
-  applyFilters();
-});
-
-brandFilter.addEventListener("change", applyFilters);
-searchInput.addEventListener("input", applyFilters);
-
-loadBikes();
+  loadBikes();
 </script>
 
 </body>
