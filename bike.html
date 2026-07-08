@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>車輛詳情｜誠匠二輪</title>
+  <title>頠?閰單?嚚???頛?/title>
   <link rel="stylesheet" href="style.css">
 
   <style>
@@ -364,21 +364,21 @@
 <body>
 
 <header class="navbar">
-  <a class="logo" href="index.html">誠匠二輪</a>
+  <a class="logo" href="index.html">隤?鈭憚</a>
 
   <nav>
-    <a href="index.html">首頁</a>
-    <a href="inventory.html">車輛列表</a>
-    <a href="index.html#process">交易流程</a>
-    <a href="sell.html">我要賣車</a>
+    <a href="index.html">擐?</a>
+    <a href="inventory.html">頠??”</a>
+    <a href="index.html#process">鈭斗?瘚?</a>
+    <a href="sell.html">??鞈??</a>
 
     <div class="about-menu">
       <button class="about-trigger" type="button">
-        關於我們 <span>⌄</span>
+        ???<span>??/span>
       </button>
 
       <div class="about-dropdown">
-        <a href="https://www.instagram.com/namidamodenai?utm_source=qr" target="_blank" rel="noopener">
+        <a href="https://www.instagram.com/chengjiang.moto?igsh=NDQwMjZzNmVjY2Fo" target="_blank" rel="noopener">
           Instagram
         </a>
 
@@ -386,30 +386,30 @@
           Facebook
         </a>
 
-        <a href="https://line.me/ti/p/~jun1127." target="_blank" rel="noopener">
-          LINE 聯絡我們
+        <a href="https://line.me/ti/p/~cj.motor" target="_blank" rel="noopener">
+          LINE ?舐窗??
         </a>
       </div>
     </div>
 
-    <a href="admin.html" id="adminBtn" style="display: none;">後台</a>
+    <a href="admin.html" id="adminBtn" style="display: none;">敺</a>
   </nav>
 </header>
 
 <main class="bike-detail-page">
   <section class="bike-detail-section">
-    <a class="back-link" href="inventory.html">← 返回車輛列表</a>
-    <div id="bikeDetail">載入車輛資料中...</div>
+    <a class="back-link" href="inventory.html">??餈?頠??”</a>
+    <div id="bikeDetail">頛頠?鞈?銝?..</div>
   </section>
 </main>
 
 <div id="imageModal" class="photo-modal" hidden>
-  <button id="modalClose" class="modal-close" type="button" aria-label="關閉照片">×</button>
-  <button id="modalPrev" class="modal-prev" type="button" aria-label="上一張照片">‹</button>
+  <button id="modalClose" class="modal-close" type="button" aria-label="???抒?">?</button>
+  <button id="modalPrev" class="modal-prev" type="button" aria-label="銝?撘萇??>??/button>
 
-  <img id="modalImage" class="modal-image" src="" alt="車輛放大照片">
+  <img id="modalImage" class="modal-image" src="" alt="頠??曉之?抒?">
 
-  <button id="modalNext" class="modal-next" type="button" aria-label="下一張照片">›</button>
+  <button id="modalNext" class="modal-next" type="button" aria-label="銝?撘萇??>??/button>
 </div>
 
 <script>
@@ -466,7 +466,7 @@ function formatPrice(value) {
   const numberText = raw.replace(/[^\d]/g, "");
 
   if (!numberText) {
-    return "價格洽詢";
+    return "?寞瘣質岷";
   }
 
   return `NT$${Number(numberText).toLocaleString("zh-TW")}`;
@@ -513,7 +513,7 @@ function showNextImage() {
 
 async function loadBike() {
   if (!bikeId) {
-    bikeDetail.innerHTML = "<h2>找不到車輛資料。</h2>";
+    bikeDetail.innerHTML = "<h2>?曆??啗?頛???/h2>";
     return;
   }
 
@@ -522,7 +522,7 @@ async function loadBike() {
     const snapshot = await getDoc(bikeRef);
 
     if (!snapshot.exists()) {
-      bikeDetail.innerHTML = "<h2>找不到車輛資料。</h2>";
+      bikeDetail.innerHTML = "<h2>?曆??啗?頛???/h2>";
       return;
     }
 
@@ -537,14 +537,14 @@ async function loadBike() {
     const detailImages = galleryImages.slice(4);
 
     const specs = [
-      ["年份", bike.year || "-"],
-      ["里程", `${formatKm(bike.km)} km`],
-      ["車種", bike.type || "-"],
-      ["品牌", bike.brand || "-"],
-      ["排氣量", bike.cc || "-"],
-      ["車況", bike.condition || "-"],
-      ["所在地", bike.location || "-"],
-      ["改裝品", bike.mods || "-"]
+      ["撟港遢", bike.year || "-"],
+      ["??", `${formatKm(bike.km)} km`],
+      ["頠車", bike.type || "-"],
+      ["??", bike.brand || "-"],
+      ["?除??, bike.cc || "-"],
+      ["頠?", bike.condition || "-"],
+      ["??典", bike.location || "-"],
+      ["?寡???, bike.mods || "-"]
     ];
 
     bikeDetail.innerHTML = `
@@ -558,11 +558,11 @@ async function loadBike() {
                     id="mainImage"
                     class="main-photo"
                     src="${escapeHtml(mainImage)}"
-                    alt="${escapeHtml(bike.name || "車輛照片")}"
+                    alt="${escapeHtml(bike.name || "頠??抒?")}"
                   >
                 </button>
               `
-              : `<div class="no-photo">尚未上傳車輛照片</div>`
+              : `<div class="no-photo">撠銝頠??抒?</div>`
           }
 
           ${
@@ -575,7 +575,7 @@ async function loadBike() {
                       type="button"
                       data-index="${index}"
                     >
-                      <img src="${escapeHtml(image)}" alt="車輛照片 ${index + 1}">
+                      <img src="${escapeHtml(image)}" alt="頠??抒? ${index + 1}">
                     </button>
                   `).join("")}
                 </div>
@@ -588,7 +588,7 @@ async function loadBike() {
           <p class="bike-label">CHENG JIANG SELECTED</p>
 
           <h1 class="bike-title">
-            ${escapeHtml(bike.name || "未命名車輛")}
+            ${escapeHtml(bike.name || "?芸??頛?)}
           </h1>
 
           <p class="bike-price">
@@ -604,11 +604,11 @@ async function loadBike() {
 
           <a
             class="btn reserve-btn"
-            href="https://line.me/ti/p/~jun1127."
+            href="https://line.me/ti/p/~cj.motor"
             target="_blank"
             rel="noopener"
           >
-            加入 LINE 預約看車
+            ? LINE ????
           </a>
         </article>
       </div>
@@ -617,8 +617,8 @@ async function loadBike() {
         detailImages.length > 0
           ? `
             <section class="detail-gallery">
-              <h2>車況與精品細節</h2>
-              <p class="gallery-note">點擊照片可放大查看</p>
+              <h2>頠??移?敦蝭</h2>
+              <p class="gallery-note">暺??抒??舀憭扳??/p>
 
               <div class="detail-gallery-grid">
                 ${detailImages.map((image, index) => `
@@ -629,7 +629,7 @@ async function loadBike() {
                   >
                     <img
                       src="${escapeHtml(image)}"
-                      alt="車輛細節照片 ${index + 1}"
+                      alt="頠?蝝啁??抒? ${index + 1}"
                     >
                   </button>
                 `).join("")}
@@ -673,7 +673,7 @@ async function loadBike() {
 
   } catch (error) {
     console.error(error);
-    bikeDetail.innerHTML = "<h2>車輛資料載入失敗，請稍後再試。</h2>";
+    bikeDetail.innerHTML = "<h2>頠?鞈?頛憭望?嚗?蝔??岫??/h2>";
   }
 }
 
@@ -700,3 +700,4 @@ loadBike();
 
 </body>
 </html>
+

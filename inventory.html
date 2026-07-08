@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>車輛列表｜誠匠二輪</title>
+  <title>頠??”嚚???頛?/title>
 
   <link rel="stylesheet" href="style.css?v=20260707-3">
 </head>
@@ -11,84 +11,84 @@
 <body>
 
 <header class="navbar">
-  <a class="logo" href="index.html">誠匠二輪</a>
+  <a class="logo" href="index.html">隤?鈭憚</a>
 
   <nav>
-    <a href="index.html">首頁</a>
-    <a href="inventory.html">車輛列表</a>
-    <a href="index.html#process">交易流程</a>
-    <a href="sell.html">我要賣車</a>
+    <a href="index.html">擐?</a>
+    <a href="inventory.html">頠??”</a>
+    <a href="index.html#process">鈭斗?瘚?</a>
+    <a href="sell.html">??鞈??</a>
 
     <div class="about-menu">
       <button class="about-trigger" type="button" aria-expanded="false">
-        關於我們 <span>⌄</span>
+        ???<span>??/span>
       </button>
 
       <div class="about-dropdown">
-        <a href="https://www.instagram.com/namidamodenai?utm_source=qr" target="_blank" rel="noopener">
+        <a href="https://www.instagram.com/chengjiang.moto?igsh=NDQwMjZzNmVjY2Fo" target="_blank" rel="noopener">
           Instagram
         </a>
         <a href="https://www.facebook.com/share/1D3ot4ddPY/?mibextid=wwXIfr" target="_blank" rel="noopener">
           Facebook
         </a>
-        <a href="https://line.me/ti/p/~jun1127." target="_blank" rel="noopener">
-          LINE 聯絡我們
+        <a href="https://line.me/ti/p/~cj.motor" target="_blank" rel="noopener">
+          LINE ?舐窗??
         </a>
       </div>
     </div>
 
-    <a href="admin.html" id="adminBtn" style="display: none;">後台</a>
+    <a href="admin.html" id="adminBtn" style="display: none;">敺</a>
   </nav>
 </header>
 
 <main>
   <section class="section inventory-section">
     <p class="section-kicker">CURRENT INVENTORY</p>
-    <h2>車輛列表</h2>
+    <h2>頠??”</h2>
 
     <div class="inventory-toolbar">
       <select id="typeFilter" class="sort-select">
-        <option value="all">全部車種</option>
-        <option value="速克達">速克達</option>
-        <option value="輕檔車">輕檔車</option>
-        <option value="大型重機">大型重機</option>
-        <option value="電動車">電動車</option>
+        <option value="all">?券頠車</option>
+        <option value="????>????/option>
+        <option value="頛?頠?>頛?頠?/option>
+        <option value="憭批???">憭批???</option>
+        <option value="?餃?頠?>?餃?頠?/option>
       </select>
 
       <select id="brandFilter" class="sort-select">
-        <option value="all">全部品牌</option>
+        <option value="all">?券??</option>
       </select>
 
       <input
         id="searchInput"
         class="search-box"
         type="search"
-        placeholder="搜尋車款、品牌、年份"
+        placeholder="??頠狡???僑隞?
         autocomplete="off"
       >
 
       <select id="sortSelect" class="sort-select">
-        <option value="default">排序方式</option>
-        <option value="price-asc">價格：低到高</option>
-        <option value="price-desc">價格：高到低</option>
-        <option value="km-asc">里程：低到高</option>
-        <option value="km-desc">里程：高到低</option>
-        <option value="year-desc">年份：新到舊</option>
-        <option value="year-asc">年份：舊到新</option>
+        <option value="default">???孵?</option>
+        <option value="price-asc">?寞嚗??圈?</option>
+        <option value="price-desc">?寞嚗??唬?</option>
+        <option value="km-asc">??嚗??圈?</option>
+        <option value="km-desc">??嚗??唬?</option>
+        <option value="year-desc">撟港遢嚗?啗?</option>
+        <option value="year-asc">撟港遢嚗??唳</option>
       </select>
     </div>
 
-    <p id="bikeCount" class="bike-count">載入車輛中...</p>
+    <p id="bikeCount" class="bike-count">頛頠?銝?..</p>
 
     <div id="bikeList" class="grid">
-      <p class="loading-text">載入車輛中...</p>
+      <p class="loading-text">頛頠?銝?..</p>
     </div>
   </section>
 </main>
 
 <footer class="footer">
-  <p>誠匠二輪｜嚴選中古機車</p>
-  <p>週一至週六 10:00～21:00｜每週日公休</p>
+  <p>隤?鈭憚嚚?訾葉?斗?頠?/p>
+  <p>?曹??喲勗 10:00嚚?1:00嚚??望?砌?</p>
 </footer>
 
 <script>
@@ -152,7 +152,7 @@
 
   function formatPrice(value) {
     const price = toNumber(value);
-    return price > 0 ? `NT$${formatNumber(price)}` : "價格洽詢";
+    return price > 0 ? `NT$${formatNumber(price)}` : "?寞瘣質岷";
   }
 
   function getImage(bike) {
@@ -162,7 +162,7 @@
   function updateTypeOptions() {
     const currentType = typeFilter.value;
 
-    const defaultTypes = ["速克達", "輕檔車", "大型重機", "電動車"];
+    const defaultTypes = ["????, "頛?頠?, "憭批???", "?餃?頠?];
 
     const extraTypes = [...new Set(
       bikes
@@ -172,7 +172,7 @@
     )].sort((a, b) => a.localeCompare(b, "zh-Hant"));
 
     typeFilter.innerHTML = `
-      <option value="all">全部車種</option>
+      <option value="all">?券頠車</option>
       ${defaultTypes.map(type => `
         <option value="${escapeHTML(type)}">${escapeHTML(type)}</option>
       `).join("")}
@@ -197,7 +197,7 @@
     )].sort((a, b) => a.localeCompare(b, "zh-Hant"));
 
     brandFilter.innerHTML = `
-      <option value="all">全部品牌</option>
+      <option value="all">?券??</option>
       ${brands.map(brand => `
         <option value="${escapeHTML(brand)}">${escapeHTML(brand)}</option>
       `).join("")}
@@ -212,9 +212,9 @@
 
   function renderBikeCard(bike) {
     const image = getImage(bike);
-    const name = bike.name || "未命名車輛";
+    const name = bike.name || "?芸??頛?;
     const brand = getBrand(bike) || "-";
-    const type = getType(bike) || "未分類";
+    const type = getType(bike) || "?芸?憿?;
     const year = bike.year || "-";
     const km = bike.km === "" || bike.km === undefined || bike.km === null
       ? "-"
@@ -225,11 +225,11 @@
         ${
           image
             ? `<img src="${escapeHTML(image)}" alt="${escapeHTML(name)}" loading="lazy">`
-            : `<div class="card-image-placeholder">暫無圖片</div>`
+            : `<div class="card-image-placeholder">?怎??</div>`
         }
         <h3>${escapeHTML(name)}</h3>
-        <p>${escapeHTML(type)}｜${escapeHTML(brand)}</p>
-        <p>${escapeHTML(year)}｜${escapeHTML(km)}</p>
+        <p>${escapeHTML(type)}嚚?{escapeHTML(brand)}</p>
+        <p>${escapeHTML(year)}嚚?{escapeHTML(km)}</p>
         <p>${formatPrice(bike.price)}</p>
       </a>
     `;
@@ -296,12 +296,12 @@
 
     const sortedBikes = sortBikes(filteredBikes);
 
-    bikeCount.textContent = `共 ${sortedBikes.length} 台車輛`;
+    bikeCount.textContent = `??${sortedBikes.length} ?啗?頛;
 
     if (sortedBikes.length === 0) {
       bikeList.innerHTML = `
         <p class="loading-text">
-          目前沒有符合條件的車輛。
+          ?桀?瘝?蝚血?璇辣??頛?
         </p>
       `;
       return;
@@ -325,11 +325,11 @@
     } catch (error) {
       console.error(error);
 
-      bikeCount.textContent = "車輛資料載入失敗";
+      bikeCount.textContent = "頠?鞈?頛憭望?";
 
       bikeList.innerHTML = `
         <p class="loading-text">
-          車輛資料載入失敗，請稍後再試。
+          頠?鞈?頛憭望?嚗?蝔??岫??
         </p>
       `;
     }
