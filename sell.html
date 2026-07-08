@@ -1,26 +1,26 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>??鞈??嚚???頛?/title>
+  <title>我要賣車｜誠匠二輪</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <header class="navbar">
-  <div class="logo">隤?鈭憚</div>
+  <div class="logo">誠匠二輪</div>
   <nav>
-    <a href="index.html">擐?</a>
-    <a href="inventory.html">頠??”</a>
-    <a href="sell.html">??鞈??</a>
-    <a href="admin.html" id="adminBtn" style="display:none;">敺</a>
+    <a href="index.html">首頁</a>
+    <a href="inventory.html">車輛列表</a>
+    <a href="sell.html">我要賣車</a>
+    <a href="admin.html" id="adminBtn" style="display:none;">後台</a>
   </nav>
 </header>
 
 <section class="section">
-  <h2>蝺?隡啣</h2>
+  <h2>線上估價</h2>
 
   <div style="
     max-width:1000px;
@@ -34,7 +34,7 @@
       margin-bottom:18px;
       color:#555;
     ">
-      憛怠神?箸鞈?敺嚗????∪翰??舐鼠銝行?靘?甇乩摯?嫘?
+      填寫基本資料後送出，我們將盡快與您聯繫並提供初步估價。
     </p>
 
     <p style="
@@ -44,9 +44,9 @@
       font-weight:600;
       margin-bottom:40px;
     ">
-      ???箔????湔?蝣箔摯?對??敺???LINE 鋆??喳?
-      ???准椰?氬?氬?撠整??
-      憒??＊?桀?鋆雿?撱箄降銝雿菜?靘?
+      ※ 為了提供更準確估價，送出後請於 LINE 補充至少
+      「車頭、左側、右側、車尾」照片，
+      如有明顯刮傷或改裝部位也建議一併提供。
     </p>
 
     <div style="
@@ -56,19 +56,19 @@
       align-items:start;
     ">
 
-      <input id="name" class="search-box" placeholder="憪?">
-      <input id="phone" class="search-box" placeholder="?舐窗?餉店">
+      <input id="name" class="search-box" placeholder="姓名">
+      <input id="phone" class="search-box" placeholder="聯絡電話">
 
-      <input id="bike" class="search-box" placeholder="頠狡?迂">
-      <input id="year" class="search-box" placeholder="撟港遢">
+      <input id="bike" class="search-box" placeholder="車款名稱">
+      <input id="year" class="search-box" placeholder="年份">
 
-      <input id="km" class="search-box" placeholder="??">
-      <input id="price" class="search-box" placeholder="??寞">
+      <input id="km" class="search-box" placeholder="里程">
+      <input id="price" class="search-box" placeholder="預售價格">
 
       <textarea
   id="mods"
   class="search-box"
-  placeholder="?寡???靘?嚗?獢踴?瘞?恣????璇?..嚗?
+  placeholder="改裝品（例如：拉桿、排氣管、避震、卡鉗、鍊條...）"
   style="
     min-height:160px;
     resize:none;
@@ -78,7 +78,7 @@
       <textarea
         id="note"
         class="search-box"
-        placeholder="?嗡?鋆?嚗?憒?瘜?????擗?瘜?"
+        placeholder="其他補充（例如車況、事故紀錄、保養狀況）"
         style="
           min-height:160px;
           resize:none;
@@ -91,14 +91,14 @@
       margin-top:35px;
       min-width:180px;
     ">
-      ?隡啣?瘙?
+      送出估價需求
     </button>
 
   </div>
 </section>
 
 <footer class="footer">
-  <p>隤?鈭憚嚚葉?斗?頠?鞈?/p>
+  <p>誠匠二輪｜中古機車專賣</p>
 </footer>
 
 <script>
@@ -117,23 +117,23 @@ document.getElementById("sendBtn").addEventListener("click", () => {
   const note = document.getElementById("note").value;
 
   const text = encodeURIComponent(
-`?典末嚗??喃摯?寡都頠?
+`您好，我想估價賣車：
 
-憪?嚗?{name}
-?舐窗?餉店嚗?{phone}
-頠狡嚗?{bike}
-撟港遢嚗?{year}
-??嚗?{km}
-??寞嚗?{price}
-?寡???${mods}
-?酉嚗?{note}
+姓名：${name}
+聯絡電話：${phone}
+車款：${bike}
+年份：${year}
+里程：${km}
+預售價格：${price}
+改裝品：${mods}
+備註：${note}
 
-隢?鋆?嚗?
-頠 / 撌血 / ?喳 / 頠偏 ?抒?嚗?
-隞亙?渡移皞摯?對?雓??
+請再補充：
+車頭 / 左側 / 右側 / 車尾 照片，
+以利更精準估價，謝謝。`
   );
 
-  const lineLink = `https://line.me/R/ti/p/~cj.motor?text=${text}`;
+  const lineLink = `https://line.me/R/ti/p/~jun1127.?text=${text}`;
   window.open(lineLink, "_blank");
 });
 </script>
