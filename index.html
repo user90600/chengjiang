@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>誠匠二輪｜嚴選中古機車</title>
   <meta name="google-site-verification" content="CY_wVjcz_qb4eX5nUE_DCTDJS3RSgOw7u00LAW74AXE">
-  <link rel="stylesheet" href="style.css?v=20260707-2">
+  <link rel="stylesheet" href="style.css?v=20260708-1">
 </head>
 
 <body>
@@ -25,9 +25,9 @@
       </button>
 
       <div class="about-dropdown">
-        <a href="https://www.instagram.com/namidamodenai?utm_source=qr" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.instagram.com/chengjiang.moto?igsh=NDQwMjZzNmVjY2Fo" target="_blank" rel="noopener">Instagram</a>
         <a href="https://www.facebook.com/share/1D3ot4ddPY/?mibextid=wwXIfr" target="_blank" rel="noopener">Facebook</a>
-        <a href="https://line.me/ti/p/~jun1127." target="_blank" rel="noopener">LINE 聯絡我們</a>
+        <a href="https://line.me/ti/p/~cj.motor" target="_blank" rel="noopener">LINE 聯絡我們</a>
       </div>
     </div>
 
@@ -123,7 +123,7 @@
   <p class="section-kicker">FEATURED BIKES</p>
   <h2>精選車輛</h2>
 
-  <div id="featuredBikes" class="featured-grid" aria-live="polite">
+  <div id="featuredBikes" class="featured-grid">
     <p class="loading-text">載入車輛中...</p>
   </div>
 
@@ -223,6 +223,14 @@
     return price > 0 ? `NT$${formatNumber(price)}` : "價格洽詢";
   }
 
+  function getBrand(bike) {
+    return bike.brand || bike.bikeBrand || bike.manufacturer || "";
+  }
+
+  function getType(bike) {
+    return bike.type || bike.bikeType || bike.category || "";
+  }
+
   function imageMarkup(bike) {
     const image = Array.isArray(bike.images) ? bike.images[0] : "";
 
@@ -235,8 +243,8 @@
 
   function bikeCard(bike) {
     const name = bike.name || "未命名車輛";
-    const type = bike.type || "未分類";
-    const brand = bike.brand || "-";
+    const type = getType(bike) || "未分類";
+    const brand = getBrand(bike) || "-";
     const year = bike.year || "-";
     const km = bike.km === 0 || bike.km ? `${formatNumber(bike.km)} km` : "-";
 
@@ -273,7 +281,7 @@
 
     featuredBikes.className = "featured-marquee";
     featuredBikes.innerHTML = `
-      <div class="marquee-viewport" aria-label="隨機車輛跑馬燈">
+      <div class="marquee-viewport">
         <div class="marquee-track" style="--marquee-duration: ${duration}s;">
           <div class="marquee-group">${cards}</div>
           <div class="marquee-group" aria-hidden="true">${cards}</div>
@@ -281,17 +289,6 @@
       </div>
       <p class="marquee-note">目前沒有指定精選車輛，現有車輛正在隨機輪播。</p>
     `;
-
-    const viewport = featuredBikes.querySelector(".marquee-viewport");
-    const track = featuredBikes.querySelector(".marquee-track");
-
-    const pause = () => track.classList.add("is-paused");
-    const resume = () => track.classList.remove("is-paused");
-
-    viewport.addEventListener("pointerdown", pause);
-    viewport.addEventListener("pointerup", resume);
-    viewport.addEventListener("pointercancel", resume);
-    viewport.addEventListener("pointerleave", resume);
   }
 
   function renderFeatured(bikes) {
@@ -309,6 +306,7 @@
   async function loadFeaturedBikes() {
     try {
       const snapshot = await getDocs(collection(db, "bikes"));
+
       const bikes = snapshot.docs.map(item => ({
         id: item.id,
         ...item.data()
