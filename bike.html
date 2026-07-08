@@ -4,7 +4,361 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>車輛詳情｜誠匠二輪</title>
-  <link rel="stylesheet" href="style.css?v=20260708-1">
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .bike-detail-page {
+      min-height: 100vh;
+      background: #f7f7f7;
+    }
+
+    .bike-detail-section {
+      max-width: 1260px;
+      margin: auto;
+      padding: 56px 30px 80px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 24px;
+      color: #555;
+      font-size: 16px;
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      color: #c9a227;
+    }
+
+    .bike-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(360px, 0.92fr);
+      gap: 44px;
+      align-items: start;
+    }
+
+    .bike-media {
+      min-width: 0;
+    }
+
+    .main-photo-button {
+      width: 100%;
+      padding: 0;
+      display: block;
+      overflow: hidden;
+      background: #eeeeee;
+      border: 0;
+      border-radius: 18px;
+      cursor: zoom-in;
+    }
+
+    .main-photo {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      display: block;
+      object-fit: cover;
+      background: #eeeeee;
+    }
+
+    .primary-thumbs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .thumb-button {
+      padding: 0;
+      overflow: hidden;
+      background: #eeeeee;
+      border: 2px solid #dddddd;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .thumb-button.active {
+      border-color: #c9a227;
+    }
+
+    .thumb-button img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      display: block;
+      object-fit: cover;
+    }
+
+    .bike-info-card {
+      padding: 34px;
+      text-align: left;
+      background: white;
+      border-radius: 18px;
+      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.08);
+    }
+
+    .bike-label {
+      margin: 0 0 10px;
+      color: #c9a227;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 2px;
+    }
+
+    .bike-title {
+      margin: 0 0 14px;
+      color: #111111;
+      font-size: clamp(38px, 4vw, 52px);
+      line-height: 1.22;
+      word-break: break-word;
+    }
+
+    .bike-price {
+      margin: 0 0 30px;
+      color: #c9a227;
+      font-size: clamp(32px, 3.4vw, 46px);
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    .spec-list {
+      display: grid;
+      grid-template-columns: 120px minmax(0, 1fr);
+      gap: 14px 16px;
+      font-size: 18px;
+      line-height: 1.75;
+    }
+
+    .spec-list strong {
+      color: #222222;
+    }
+
+    .spec-list span {
+      min-width: 0;
+      color: #555555;
+      overflow-wrap: anywhere;
+    }
+
+    .reserve-btn {
+      width: 100%;
+      margin: 34px 0 0;
+      text-align: center;
+    }
+
+    .detail-gallery {
+      margin-top: 70px;
+    }
+
+    .detail-gallery h2 {
+      margin-bottom: 10px;
+    }
+
+    .gallery-note {
+      margin: 0 0 28px;
+      color: #666666;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    .detail-gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .detail-photo {
+      padding: 0;
+      overflow: hidden;
+      background: #eeeeee;
+      border: 0;
+      border-radius: 14px;
+      cursor: zoom-in;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.1);
+    }
+
+    .detail-photo img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      display: block;
+      object-fit: cover;
+      transition: transform 0.25s ease;
+    }
+
+    .detail-photo:hover img {
+      transform: scale(1.05);
+    }
+
+    .no-photo {
+      min-height: 300px;
+      display: grid;
+      place-items: center;
+      color: #777777;
+      background: #eeeeee;
+      border-radius: 18px;
+      font-size: 18px;
+    }
+
+    .photo-modal[hidden] {
+      display: none;
+    }
+
+    .photo-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
+      background: rgba(0, 0, 0, 0.92);
+    }
+
+    .modal-image {
+      max-width: 92vw;
+      max-height: 84vh;
+      display: block;
+      object-fit: contain;
+      border-radius: 12px;
+    }
+
+    .modal-close,
+    .modal-prev,
+    .modal-next {
+      position: absolute;
+      z-index: 2;
+      display: grid;
+      width: 46px;
+      height: 46px;
+      place-items: center;
+      color: white;
+      background: rgba(255, 255, 255, 0.13);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 28px;
+    }
+
+    .modal-close {
+      top: 20px;
+      right: 22px;
+    }
+
+    .modal-prev {
+      left: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .modal-next {
+      right: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    @media (max-width: 760px) {
+      .bike-detail-section {
+        padding: 30px 18px 56px;
+      }
+
+      .back-link {
+        margin-bottom: 18px;
+        font-size: 15px;
+      }
+
+      .bike-layout {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+
+      .main-photo-button {
+        border-radius: 16px;
+      }
+
+      .main-photo {
+        aspect-ratio: 4 / 3;
+      }
+
+      .primary-thumbs {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        padding-bottom: 5px;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .thumb-button {
+        min-width: 76px;
+        border-radius: 9px;
+      }
+
+      .bike-info-card {
+        padding: 27px 22px;
+        border-radius: 16px;
+      }
+
+      .bike-label {
+        font-size: 12px;
+      }
+
+      .bike-title {
+        font-size: clamp(36px, 12vw, 48px);
+      }
+
+      .bike-price {
+        margin-bottom: 24px;
+        font-size: clamp(30px, 10vw, 42px);
+      }
+
+      .spec-list {
+        grid-template-columns: 86px minmax(0, 1fr);
+        gap: 13px 12px;
+        font-size: 17px;
+      }
+
+      .reserve-btn {
+        margin-top: 28px;
+      }
+
+      .detail-gallery {
+        margin-top: 48px;
+      }
+
+      .detail-gallery h2 {
+        font-size: 28px;
+      }
+
+      .detail-gallery-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 11px;
+      }
+
+      .detail-photo {
+        border-radius: 10px;
+      }
+
+      .modal-prev,
+      .modal-next {
+        width: 40px;
+        height: 40px;
+        font-size: 24px;
+      }
+
+      .modal-prev {
+        left: 12px;
+      }
+
+      .modal-next {
+        right: 12px;
+      }
+
+      .modal-close {
+        top: 14px;
+        right: 14px;
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -19,14 +373,22 @@
     <a href="sell.html">我要賣車</a>
 
     <div class="about-menu">
-      <button class="about-trigger" type="button" aria-expanded="false">
+      <button class="about-trigger" type="button">
         關於我們 <span>⌄</span>
       </button>
 
       <div class="about-dropdown">
-        <a href="https://www.instagram.com/chengjiang.moto?igsh=NDQwMjZzNmVjY2Fo" target="_blank" rel="noopener">Instagram</a>
-        <a href="https://www.facebook.com/share/1D3ot4ddPY/?mibextid=wwXIfr" target="_blank" rel="noopener">Facebook</a>
-        <a href="https://line.me/ti/p/~cj.motor" target="_blank" rel="noopener">LINE 聯絡我們</a>
+        <a href="https://www.instagram.com/namidamodenai?utm_source=qr" target="_blank" rel="noopener">
+          Instagram
+        </a>
+
+        <a href="https://www.facebook.com/share/1D3ot4ddPY/?mibextid=wwXIfr" target="_blank" rel="noopener">
+          Facebook
+        </a>
+
+        <a href="https://line.me/ti/p/~jun1127." target="_blank" rel="noopener">
+          LINE 聯絡我們
+        </a>
       </div>
     </div>
 
@@ -34,181 +396,306 @@
   </nav>
 </header>
 
-<main>
-  <section class="section inventory-section">
-    <p class="section-kicker">BIKE DETAIL</p>
-    <h2 id="bikeTitle">車輛詳情</h2>
-
-    <div id="bikeDetail" class="bike-detail-wrap">
-      <p class="loading-text">載入車輛資料中...</p>
-    </div>
+<main class="bike-detail-page">
+  <section class="bike-detail-section">
+    <a class="back-link" href="inventory.html">← 返回車輛列表</a>
+    <div id="bikeDetail">載入車輛資料中...</div>
   </section>
 </main>
 
-<footer class="footer">
-  <p>誠匠二輪｜嚴選中古機車</p>
-  <p>週一至週六 10:00～21:00｜每週日公休</p>
-</footer>
+<div id="imageModal" class="photo-modal" hidden>
+  <button id="modalClose" class="modal-close" type="button" aria-label="關閉照片">×</button>
+  <button id="modalPrev" class="modal-prev" type="button" aria-label="上一張照片">‹</button>
+
+  <img id="modalImage" class="modal-image" src="" alt="車輛放大照片">
+
+  <button id="modalNext" class="modal-next" type="button" aria-label="下一張照片">›</button>
+</div>
 
 <script>
-  if (localStorage.getItem("isAdmin") === "true") {
-    document.getElementById("adminBtn").style.display = "inline-block";
+if (localStorage.getItem("isAdmin") === "true") {
+  document.getElementById("adminBtn").style.display = "inline-block";
+}
+
+const aboutMenu = document.querySelector(".about-menu");
+const aboutTrigger = document.querySelector(".about-trigger");
+
+aboutTrigger.addEventListener("click", () => {
+  aboutMenu.classList.toggle("is-open");
+});
+
+document.addEventListener("click", event => {
+  if (!aboutMenu.contains(event.target)) {
+    aboutMenu.classList.remove("is-open");
   }
-
-  const aboutMenu = document.querySelector(".about-menu");
-  const aboutTrigger = document.querySelector(".about-trigger");
-
-  aboutTrigger.addEventListener("click", () => {
-    const isOpen = aboutMenu.classList.toggle("is-open");
-    aboutTrigger.setAttribute("aria-expanded", String(isOpen));
-  });
-
-  document.addEventListener("click", event => {
-    if (!aboutMenu.contains(event.target)) {
-      aboutMenu.classList.remove("is-open");
-      aboutTrigger.setAttribute("aria-expanded", "false");
-    }
-  });
+});
 </script>
 
 <script type="module">
-  import { db } from "./firebase.js";
-  import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+import { db } from "./firebase.js";
 
-  const bikeTitle = document.getElementById("bikeTitle");
-  const bikeDetail = document.getElementById("bikeDetail");
+import {
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
-  const params = new URLSearchParams(window.location.search);
-  const bikeId = params.get("id");
+const params = new URLSearchParams(location.search);
+const bikeId = params.get("id");
 
-  function escapeHTML(value) {
-    return String(value ?? "")
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
+const bikeDetail = document.getElementById("bikeDetail");
+const imageModal = document.getElementById("imageModal");
+const modalImage = document.getElementById("modalImage");
+const modalClose = document.getElementById("modalClose");
+const modalPrev = document.getElementById("modalPrev");
+const modalNext = document.getElementById("modalNext");
+
+let galleryImages = [];
+let activeImageIndex = 0;
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function formatPrice(value) {
+  const raw = String(value ?? "").trim();
+  const numberText = raw.replace(/[^\d]/g, "");
+
+  if (!numberText) {
+    return "價格洽詢";
   }
 
-  function toNumber(value) {
-    const number = Number(String(value ?? "").replace(/[^\d.-]/g, ""));
-    return Number.isFinite(number) ? number : 0;
+  return `NT$${Number(numberText).toLocaleString("zh-TW")}`;
+}
+
+function formatKm(value) {
+  const raw = String(value ?? "").trim();
+  const numberText = raw.replace(/[^\d]/g, "");
+
+  if (!numberText) {
+    return "-";
   }
 
-  function formatNumber(value) {
-    return new Intl.NumberFormat("zh-TW").format(toNumber(value));
+  return Number(numberText).toLocaleString("zh-TW");
+}
+
+function openModal(index) {
+  if (!galleryImages.length) return;
+
+  activeImageIndex = index;
+  modalImage.src = galleryImages[activeImageIndex];
+  imageModal.hidden = false;
+  document.body.classList.add("modal-open");
+}
+
+function closeModal() {
+  imageModal.hidden = true;
+  document.body.classList.remove("modal-open");
+}
+
+function showPreviousImage() {
+  activeImageIndex =
+    (activeImageIndex - 1 + galleryImages.length) % galleryImages.length;
+
+  modalImage.src = galleryImages[activeImageIndex];
+}
+
+function showNextImage() {
+  activeImageIndex =
+    (activeImageIndex + 1) % galleryImages.length;
+
+  modalImage.src = galleryImages[activeImageIndex];
+}
+
+async function loadBike() {
+  if (!bikeId) {
+    bikeDetail.innerHTML = "<h2>找不到車輛資料。</h2>";
+    return;
   }
 
-  function formatPrice(value) {
-    const price = toNumber(value);
-    return price > 0 ? `NT$${formatNumber(price)}` : "價格洽詢";
-  }
+  try {
+    const bikeRef = doc(db, "bikes", bikeId);
+    const snapshot = await getDoc(bikeRef);
 
-  function getBrand(bike) {
-    return bike.brand || bike.bikeBrand || bike.manufacturer || "";
-  }
-
-  function getType(bike) {
-    return bike.type || bike.bikeType || bike.category || "";
-  }
-
-  function renderImages(images = [], name = "車輛圖片") {
-    if (!Array.isArray(images) || images.length === 0) {
-      return `<div class="card-image-placeholder bike-detail-placeholder">暫無圖片</div>`;
-    }
-
-    return `
-      <div class="bike-detail-images">
-        ${images.map(image => `
-          <img src="${escapeHTML(image)}" alt="${escapeHTML(name)}" loading="lazy">
-        `).join("")}
-      </div>
-    `;
-  }
-
-  function renderBike(bike) {
-    const name = bike.name || "未命名車輛";
-    const brand = getBrand(bike) || "-";
-    const type = getType(bike) || "未分類";
-    const year = bike.year || "-";
-    const km = bike.km === "" || bike.km === undefined || bike.km === null
-      ? "-"
-      : `${formatNumber(bike.km)} km`;
-
-    document.title = `${name}｜誠匠二輪`;
-    bikeTitle.textContent = name;
-
-    bikeDetail.innerHTML = `
-      <div class="bike-detail-card">
-        ${renderImages(bike.images, name)}
-
-        <div class="bike-detail-info">
-          <p class="section-kicker">SELECTED BIKE</p>
-          <h1>${escapeHTML(name)}</h1>
-
-          <p class="bike-detail-price">${formatPrice(bike.price)}</p>
-
-          <div class="bike-detail-specs">
-            <div>
-              <span>車種</span>
-              <strong>${escapeHTML(type)}</strong>
-            </div>
-
-            <div>
-              <span>品牌</span>
-              <strong>${escapeHTML(brand)}</strong>
-            </div>
-
-            <div>
-              <span>年份</span>
-              <strong>${escapeHTML(year)}</strong>
-            </div>
-
-            <div>
-              <span>里程</span>
-              <strong>${escapeHTML(km)}</strong>
-            </div>
-          </div>
-
-          <div class="bike-detail-actions">
-            <a class="btn" href="https://line.me/ti/p/~cj.motor" target="_blank" rel="noopener">
-              LINE 詢問
-            </a>
-
-            <a class="btn btn-outline" href="inventory.html">
-              回車輛列表
-            </a>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  async function loadBike() {
-    if (!bikeId) {
-      bikeDetail.innerHTML = "<p class='loading-text'>找不到車輛資料。</p>";
+    if (!snapshot.exists()) {
+      bikeDetail.innerHTML = "<h2>找不到車輛資料。</h2>";
       return;
     }
 
-    try {
-      const snapshot = await getDoc(doc(db, "bikes", bikeId));
+    const bike = snapshot.data();
 
-      if (!snapshot.exists()) {
-        bikeDetail.innerHTML = "<p class='loading-text'>這台車可能已下架。</p>";
-        return;
+    galleryImages = Array.isArray(bike.images)
+      ? bike.images.filter(image => typeof image === "string" && image.trim())
+      : [];
+
+    const mainImage = galleryImages[0] || "";
+    const thumbnails = galleryImages.slice(0, 4);
+    const detailImages = galleryImages.slice(4);
+
+    const specs = [
+      ["年份", bike.year || "-"],
+      ["里程", `${formatKm(bike.km)} km`],
+      ["車種", bike.type || "-"],
+      ["品牌", bike.brand || "-"],
+      ["排氣量", bike.cc || "-"],
+      ["車況", bike.condition || "-"],
+      ["所在地", bike.location || "-"],
+      ["改裝品", bike.mods || "-"]
+    ];
+
+    bikeDetail.innerHTML = `
+      <div class="bike-layout">
+        <div class="bike-media">
+          ${
+            mainImage
+              ? `
+                <button class="main-photo-button" type="button" data-index="0">
+                  <img
+                    id="mainImage"
+                    class="main-photo"
+                    src="${escapeHtml(mainImage)}"
+                    alt="${escapeHtml(bike.name || "車輛照片")}"
+                  >
+                </button>
+              `
+              : `<div class="no-photo">尚未上傳車輛照片</div>`
+          }
+
+          ${
+            thumbnails.length > 1
+              ? `
+                <div class="primary-thumbs">
+                  ${thumbnails.map((image, index) => `
+                    <button
+                      class="thumb-button ${index === 0 ? "active" : ""}"
+                      type="button"
+                      data-index="${index}"
+                    >
+                      <img src="${escapeHtml(image)}" alt="車輛照片 ${index + 1}">
+                    </button>
+                  `).join("")}
+                </div>
+              `
+              : ""
+          }
+        </div>
+
+        <article class="bike-info-card">
+          <p class="bike-label">CHENG JIANG SELECTED</p>
+
+          <h1 class="bike-title">
+            ${escapeHtml(bike.name || "未命名車輛")}
+          </h1>
+
+          <p class="bike-price">
+            ${formatPrice(bike.price)}
+          </p>
+
+          <div class="spec-list">
+            ${specs.map(([label, value]) => `
+              <strong>${escapeHtml(label)}</strong>
+              <span>${escapeHtml(value)}</span>
+            `).join("")}
+          </div>
+
+          <a
+            class="btn reserve-btn"
+            href="https://line.me/ti/p/~jun1127."
+            target="_blank"
+            rel="noopener"
+          >
+            加入 LINE 預約看車
+          </a>
+        </article>
+      </div>
+
+      ${
+        detailImages.length > 0
+          ? `
+            <section class="detail-gallery">
+              <h2>車況與精品細節</h2>
+              <p class="gallery-note">點擊照片可放大查看</p>
+
+              <div class="detail-gallery-grid">
+                ${detailImages.map((image, index) => `
+                  <button
+                    class="detail-photo"
+                    type="button"
+                    data-index="${index + 4}"
+                  >
+                    <img
+                      src="${escapeHtml(image)}"
+                      alt="車輛細節照片 ${index + 1}"
+                    >
+                  </button>
+                `).join("")}
+              </div>
+            </section>
+          `
+          : ""
       }
+    `;
 
-      renderBike({
-        id: snapshot.id,
-        ...snapshot.data()
+    const mainPhotoButton = document.querySelector(".main-photo-button");
+    const mainImageElement = document.getElementById("mainImage");
+
+    if (mainPhotoButton) {
+      mainPhotoButton.addEventListener("click", () => {
+        openModal(0);
       });
-    } catch (error) {
-      console.error(error);
-      bikeDetail.innerHTML = "<p class='loading-text'>車輛資料載入失敗，請稍後再試。</p>";
     }
-  }
 
-  loadBike();
+    document.querySelectorAll(".thumb-button").forEach(button => {
+      button.addEventListener("click", () => {
+        const index = Number(button.dataset.index);
+
+        if (mainImageElement) {
+          mainImageElement.src = galleryImages[index];
+        }
+
+        document.querySelectorAll(".thumb-button").forEach(item => {
+          item.classList.remove("active");
+        });
+
+        button.classList.add("active");
+      });
+    });
+
+    document.querySelectorAll(".detail-photo").forEach(button => {
+      button.addEventListener("click", () => {
+        openModal(Number(button.dataset.index));
+      });
+    });
+
+  } catch (error) {
+    console.error(error);
+    bikeDetail.innerHTML = "<h2>車輛資料載入失敗，請稍後再試。</h2>";
+  }
+}
+
+modalClose.addEventListener("click", closeModal);
+modalPrev.addEventListener("click", showPreviousImage);
+modalNext.addEventListener("click", showNextImage);
+
+imageModal.addEventListener("click", event => {
+  if (event.target === imageModal) {
+    closeModal();
+  }
+});
+
+document.addEventListener("keydown", event => {
+  if (imageModal.hidden) return;
+
+  if (event.key === "Escape") closeModal();
+  if (event.key === "ArrowLeft") showPreviousImage();
+  if (event.key === "ArrowRight") showNextImage();
+});
+
+loadBike();
 </script>
 
 </body>

@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>車輛列表｜誠匠二輪</title>
-  <link rel="stylesheet" href="style.css?v=20260708-1">
+
+  <link rel="stylesheet" href="style.css?v=20260707-3">
 </head>
 
 <body>
@@ -24,9 +25,15 @@
       </button>
 
       <div class="about-dropdown">
-        <a href="https://www.instagram.com/chengjiang.moto?igsh=NDQwMjZzNmVjY2Fo" target="_blank" rel="noopener">Instagram</a>
-        <a href="https://www.facebook.com/share/1D3ot4ddPY/?mibextid=wwXIfr" target="_blank" rel="noopener">Facebook</a>
-        <a href="https://line.me/ti/p/~cj.motor" target="_blank" rel="noopener">LINE 聯絡我們</a>
+        <a href="https://www.instagram.com/namidamodenai?utm_source=qr" target="_blank" rel="noopener">
+          Instagram
+        </a>
+        <a href="https://www.facebook.com/share/1D3ot4ddPY/?mibextid=wwXIfr" target="_blank" rel="noopener">
+          Facebook
+        </a>
+        <a href="https://line.me/ti/p/~jun1127." target="_blank" rel="noopener">
+          LINE 聯絡我們
+        </a>
       </div>
     </div>
 
@@ -42,6 +49,10 @@
     <div class="inventory-toolbar">
       <select id="typeFilter" class="sort-select">
         <option value="all">全部車種</option>
+        <option value="速克達">速克達</option>
+        <option value="輕檔車">輕檔車</option>
+        <option value="大型重機">大型重機</option>
+        <option value="電動車">電動車</option>
       </select>
 
       <select id="brandFilter" class="sort-select">
@@ -102,8 +113,7 @@
 </script>
 
 <script type="module">
-  import { db } from "./firebase.js";
-  import { collection, getDocs } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+  import { db, collection, getDocs } from "./firebase.js";
 
   const bikeList = document.getElementById("bikeList");
   const bikeCount = document.getElementById("bikeCount");
@@ -132,11 +142,6 @@
     return new Intl.NumberFormat("zh-TW").format(toNumber(value));
   }
 
-  function formatPrice(value) {
-    const price = toNumber(value);
-    return price > 0 ? `NT$${formatNumber(price)}` : "價格洽詢";
-  }
-
   function getBrand(bike) {
     return bike.brand || bike.bikeBrand || bike.manufacturer || "";
   }
@@ -145,8 +150,64 @@
     return bike.type || bike.bikeType || bike.category || "";
   }
 
+  function formatPrice(value) {
+    const price = toNumber(value);
+    return price > 0 ? `NT$${formatNumber(price)}` : "價格洽詢";
+  }
+
   function getImage(bike) {
     return Array.isArray(bike.images) ? bike.images[0] || "" : "";
+  }
+
+  function updateTypeOptions() {
+    const currentType = typeFilter.value;
+
+    const defaultTypes = ["速克達", "輕檔車", "大型重機", "電動車"];
+
+    const extraTypes = [...new Set(
+      bikes
+        .map(getType)
+        .filter(Boolean)
+        .filter(type => !defaultTypes.includes(type))
+    )].sort((a, b) => a.localeCompare(b, "zh-Hant"));
+
+    typeFilter.innerHTML = `
+      <option value="all">全部車種</option>
+      ${defaultTypes.map(type => `
+        <option value="${escapeHTML(type)}">${escapeHTML(type)}</option>
+      `).join("")}
+      ${extraTypes.map(type => `
+        <option value="${escapeHTML(type)}">${escapeHTML(type)}</option>
+      `).join("")}
+    `;
+
+    if ([...typeFilter.options].some(option => option.value === currentType)) {
+      typeFilter.value = currentType;
+    }
+  }
+
+  function updateBrandOptions(sourceBikes) {
+    const currentBrand = brandFilter.value;
+
+    const brands = [...new Set(
+      sourceBikes
+        .map(getBrand)
+        .map(brand => brand.trim())
+        .filter(Boolean)
+    )].sort((a, b) => a.localeCompare(b, "zh-Hant"));
+
+    brandFilter.innerHTML = `
+      <option value="all">全部品牌</option>
+      ${brands.map(brand => `
+        <option value="${escapeHTML(brand)}">${escapeHTML(brand)}</option>
+      `).join("")}
+    `;
+
+    if (brands.includes(currentBrand)) {
+      brandFilter.value = currentBrand;
+    } else {
+      brandFilter.value = "all";
+    }
   }
 
   function renderBikeCard(bike) {
@@ -172,45 +233,6 @@
         <p>${formatPrice(bike.price)}</p>
       </a>
     `;
-  }
-
-  function updateTypeOptions() {
-    const currentType = typeFilter.value;
-    const defaultTypes = ["速克達", "輕檔車", "大型重機", "電動車"];
-
-    const extraTypes = [...new Set(
-      bikes.map(getType).filter(Boolean).filter(type => !defaultTypes.includes(type))
-    )].sort((a, b) => a.localeCompare(b, "zh-Hant"));
-
-    const allTypes = [...defaultTypes, ...extraTypes];
-
-    typeFilter.innerHTML = `
-      <option value="all">全部車種</option>
-      ${allTypes.map(type => `
-        <option value="${escapeHTML(type)}">${escapeHTML(type)}</option>
-      `).join("")}
-    `;
-
-    if ([...typeFilter.options].some(option => option.value === currentType)) {
-      typeFilter.value = currentType;
-    }
-  }
-
-  function updateBrandOptions(sourceBikes) {
-    const currentBrand = brandFilter.value;
-
-    const brands = [...new Set(
-      sourceBikes.map(getBrand).map(brand => brand.trim()).filter(Boolean)
-    )].sort((a, b) => a.localeCompare(b, "zh-Hant"));
-
-    brandFilter.innerHTML = `
-      <option value="all">全部品牌</option>
-      ${brands.map(brand => `
-        <option value="${escapeHTML(brand)}">${escapeHTML(brand)}</option>
-      `).join("")}
-    `;
-
-    brandFilter.value = brands.includes(currentBrand) ? currentBrand : "all";
   }
 
   function sortBikes(list) {
@@ -259,7 +281,8 @@
       const brand = getBrand(bike);
       const type = getType(bike);
 
-      const matchBrand = selectedBrand === "all" || brand === selectedBrand;
+      const matchBrand =
+        selectedBrand === "all" || brand === selectedBrand;
 
       const searchableText = [
         bike.name,
@@ -276,7 +299,11 @@
     bikeCount.textContent = `共 ${sortedBikes.length} 台車輛`;
 
     if (sortedBikes.length === 0) {
-      bikeList.innerHTML = `<p class="loading-text">目前沒有符合條件的車輛。</p>`;
+      bikeList.innerHTML = `
+        <p class="loading-text">
+          目前沒有符合條件的車輛。
+        </p>
+      `;
       return;
     }
 
@@ -297,8 +324,14 @@
       applyFilters();
     } catch (error) {
       console.error(error);
+
       bikeCount.textContent = "車輛資料載入失敗";
-      bikeList.innerHTML = `<p class="loading-text">車輛資料載入失敗，請稍後再試。</p>`;
+
+      bikeList.innerHTML = `
+        <p class="loading-text">
+          車輛資料載入失敗，請稍後再試。
+        </p>
+      `;
     }
   }
 
